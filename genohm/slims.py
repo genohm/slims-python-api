@@ -1,14 +1,21 @@
-import requests
 from flask import Flask
+from flask import jsonify
+from flask import request as flaskrequest
+import base64
+import requests
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 slims_instances = {}
 
 
-@app.route("/<name>/<operation>")
-def hello(name, operation):
-    slims_instances[name]._execute_operation(operation)
-    return "Hello World!" + operation
+@app.route("/<name>/<operation>/<step>", methods=["POST"])
+def hello(name, operation, step):
+    data = flaskrequest.json
+    returnValue = slims_instances[name]._execute_operation(operation + "/" + step, data)
+    return jsonify(**returnValue)
 
 
 def flaskThread():
@@ -39,54 +46,49 @@ class Slims(object):
             records.append(Record(entity))
         return records
 
-    def register(self, operation):
-        self.operations[operation.name()] = operation
-        body = {"url": "http://localhost:5000",
-                "name": self.name,
-                "operation": operation.name()}
+    def add_flow(self, flow_id, name, usage, steps):
+        step_dicts = []
+        i = 0
+        for step in steps:
+            url = flow_id + "/" + repr(i)
+            step_dicts.append(step.to_dict(url))
+            self.operations[url] = step.action
+            i += 1
 
+        flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts}
+        instance = {'url': 'http://localhost:5000', 'name': self.name}
+        body = {'instance': instance, 'flow': flow}
         response = self._post("external/", body)
 
         if response.status_code == 200:
-            print "Successfully registered " + operation.name()
+            print "Successfully registered " + flow_id
         else:
-            print "Could not register " + operation.name() + "(" + response.status_code + ")"
+            print "Could not register " + flow_id + "(" + str(response.status_code) + ")"
 
         flaskThread()
 
-    def _execute_operation(self, operation):
-        self.operations[operation].execute()
+    def _execute_operation(self, operation, data):
+        output = self.operations[operation](data=data)
+        if type(output) is file:
+            return {'bytes': base64.b64encode(output.read()), 'fileName': output.name}
+        else:
+            return output
 
 
 class Record(object):
 
     def __init__(self, json_entity):
-
-        self.columns = {}
         self.json_entity = json_entity
 
         for json_column in json_entity["columns"]:
             column = Column(json_column)
-            self.columns[column.name()] = column
-#
-# Currently disabled does not work yet (or ever)
-#           def get_column(self):
-#               return column
-#           self.__dict__[column.name()] = types.MethodType(get_column, self)
+            self.__dict__[column.name] = column
 
     def column(self, name):
-        return self.columns[name]
+        return self.__dict__[name]
 
 
 class Column(object):
 
     def __init__(self, json_column):
-        self.values = {
-            "name": json_column["name"],
-            "value": json_column["value"]}
-
-    def name(self):
-        return self.values["name"]
-
-    def value(self):
-        return self.values["value"]
+        self.__dict__.update(json_column)

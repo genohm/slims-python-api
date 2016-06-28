@@ -1,9 +1,16 @@
 from genohm.slims import Slims
 from genohm.step import *
+import time
 
 
-def execute_first_step(data):
-    print "Hello " + str(data['name'])
+def execute_first_step(flowRun):
+    print(flowRun.data)
+    for i in range(1, 10):
+        time.sleep(1)
+        print(str(i))
+        flowRun.log("Hello message " + str(i))
+
+    print "Hello " + str(flowRun.data['name'])
     return open('/Users/Ruben/git/slims-python-api/.gitignore', 'r')
 
 

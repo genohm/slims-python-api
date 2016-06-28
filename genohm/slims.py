@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import jsonify
 from flask import request as flaskrequest
+from flowrun import FlowRun
+
 import base64
 import requests
 import logging
@@ -14,7 +16,7 @@ slims_instances = {}
 @app.route("/<name>/<operation>/<step>", methods=["POST"])
 def hello(name, operation, step):
     data = flaskrequest.json
-    returnValue = slims_instances[name]._execute_operation(operation + "/" + step, data)
+    returnValue = slims_instances[name]._execute_operation(operation, step, data)
     return jsonify(**returnValue)
 
 
@@ -67,8 +69,9 @@ class Slims(object):
 
         flaskThread()
 
-    def _execute_operation(self, operation, data):
-        output = self.operations[operation](data=data)
+    def _execute_operation(self, operation, step, data):
+        flowrun = FlowRun(self, step, data)
+        output = self.operations[operation + "/" + str(step)](flowrun)
         if type(output) is file:
             return {'bytes': base64.b64encode(output.read()), 'fileName': output.name}
         else:

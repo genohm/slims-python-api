@@ -1,14 +1,10 @@
 from flask import Flask
 from flask import jsonify
 from flask import request as flaskrequest
-from flowrun import FlowRun
+from .flowrun import FlowRun
 from werkzeug.local import Local
 
-import base64
 import requests
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 slims_instances = {}
@@ -80,19 +76,16 @@ class Slims(object):
         response = self.slims_api.post("external/", body)
 
         if response.status_code == 200:
-            print "Successfully registered " + flow_id
+            print("Successfully registered " + flow_id)
         else:
-            print "Could not register " + flow_id + "(" + str(response.status_code) + ")"
+            print("Could not register " + flow_id + "(" + str(response.status_code) + ")")
 
         flask_thread()
 
     def _execute_operation(self, operation, step, data):
         flowrun = FlowRun(self.slims_api, step, data)
         output = self.operations[operation + "/" + str(step)](flowrun)
-        if type(output) is file:
-            return {'bytes': base64.b64encode(output.read()), 'fileName': output.name}
-        else:
-            return output
+        return output
 
 
 class Record(object):

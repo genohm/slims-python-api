@@ -1,4 +1,5 @@
-from genohm.slims import Slims
+from genohm.slims.slims import Slims
+import os
 
 slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
 records = slims.fetch("Content", "cntn_barCode=00000004")

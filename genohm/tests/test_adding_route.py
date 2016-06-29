@@ -1,17 +1,16 @@
-from genohm.slims import Slims
-from genohm.step import *
-import time
+from genohm.slims.slims import Slims
+from genohm.slims.step import *
+from genohm.slims.output import file_value
 
 
 def execute_first_step(flow_run):
     records = slims.fetch("Content", "cntn_barCode=00000004")
 
     flow_run.log("Hallo")
-    time.sleep(10)
     for record in records:
         print(str(record.update({"cntn_cf_custombarcode": flow_run.data["name"]})))
 
-    return open('/Users/Ruben/git/slims-python-api/.gitignore', 'r')
+    return file_value('/Users/Ruben/git/slims-python-api/.gitignore')
 
 
 slims = Slims("testSlims", "http://localhost:9999", "ruben", "ruben")

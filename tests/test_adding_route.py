@@ -3,18 +3,18 @@ from genohm.step import *
 import time
 
 
-def execute_first_step(flowRun):
-    print(flowRun.data)
-    for i in range(1, 10):
-        time.sleep(1)
-        print(str(i))
-        flowRun.log("Hello message " + str(i))
+def execute_first_step(flow_run):
+    records = slims.fetch("Content", "cntn_barCode=00000004")
 
-    print "Hello " + str(flowRun.data['name'])
+    flow_run.log("Hallo")
+    time.sleep(10)
+    for record in records:
+        print(str(record.update({"cntn_cf_custombarcode": flow_run.data["name"]})))
+
     return open('/Users/Ruben/git/slims-python-api/.gitignore', 'r')
 
 
-slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
+slims = Slims("testSlims", "http://localhost:9999", "ruben", "ruben")
 
 slims.add_flow(
     flow_id="myFlow",

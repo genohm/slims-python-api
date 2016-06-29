@@ -1,7 +1,7 @@
 class FlowRun(object):
 
-    def __init__(self, slims, index, data):
-        self.slims = slims
+    def __init__(self, slims_api, index, data):
+        self.slims_api = slims_api
         self.index = index
         self.data = data
 
@@ -11,4 +11,4 @@ class FlowRun(object):
             'flowRunGuid': self.data["flowInformation"]["flowRunGuid"],
             'message': message
         }
-        self.slims._post("external/log", body)
+        self.slims_api.post("external/log", body)

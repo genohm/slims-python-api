@@ -16,7 +16,10 @@ def hello(name, operation, step):
     data = flaskrequest.json
     local.user = data["SLIMS_CURRENT_USER"]
     return_value = slims_instances[name]._execute_operation(operation, step, data)
-    return jsonify(**return_value)
+    if return_value:
+        return jsonify(**return_value)
+    else:
+        return jsonify(**{})
 
 
 def flask_thread():
@@ -67,7 +70,7 @@ class Slims(object):
         for step in steps:
             url = flow_id + "/" + repr(i)
             step_dicts.append(step.to_dict(url))
-            self.operations[url] = step.action
+            self.operations[url] = step
             i += 1
 
         flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts}
@@ -83,8 +86,8 @@ class Slims(object):
         flask_thread()
 
     def _execute_operation(self, operation, step, data):
-        flowrun = FlowRun(self.slims_api, step, data)
-        output = self.operations[operation + "/" + str(step)](flowrun)
+        flow_run = FlowRun(self.slims_api, step, data)
+        output = self.operations[operation + "/" + str(step)].execute(flow_run)
         return output
 
 

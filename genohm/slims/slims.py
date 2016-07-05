@@ -3,6 +3,7 @@ from flask import jsonify
 from flask import request as flaskrequest
 from .flowrun import FlowRun
 from werkzeug.local import Local
+import os
 
 import requests
 
@@ -28,14 +29,27 @@ def flask_thread():
 
 class SlimsApi(object):
 
-    def __init__(self, url, username, password):
+    def __init__(self, url, username, password, repo_location):
         self.url = url + "/rest/"
         self.username = username
         self.password = password
+        self.repo_location = repo_location
 
-    def get(self, url):
-        return requests.get(self.url + url,
-                            auth=(self.username, self.password), headers=SlimsApi._headers()).json()
+    def get_entities(self, url):
+        if not url.startswith(self.url):
+            url = self.url + url
+
+        response = requests.get(url,
+                                auth=(self.username, self.password),
+                                headers=SlimsApi._headers()).json()
+        records = []
+        for entity in response["entities"]:
+            if entity["tableName"] == "Attachment":
+                records.append(Attachment(entity, self))
+            else:
+                records.append(Record(entity, self))
+
+        return records
 
     def post(self, url, body):
         return requests.post(self.url + url, json=body,
@@ -51,18 +65,14 @@ class SlimsApi(object):
 
 class Slims(object):
 
-    def __init__(self, name, url, username, password):
+    def __init__(self, name, url, username, password, repo_location=None):
         slims_instances[name] = self
-        self.slims_api = SlimsApi(url, username, password)
+        self.slims_api = SlimsApi(url, username, password, repo_location)
         self.name = name
         self.operations = {}
 
     def fetch(self, table, criteria):
-        response = self.slims_api.get(table + "?" + criteria)
-        records = []
-        for entity in response["entities"]:
-            records.append(Record(entity, self.slims_api))
-        return records
+        return self.slims_api.get_entities(table + "?" + criteria)
 
     def add_flow(self, flow_id, name, usage, steps):
         step_dicts = []
@@ -109,6 +119,30 @@ class Record(object):
         response = self.slims_api.post(url=url, body=values).json()
         new_values = response["entities"][0]
         return Record(new_values, self.slims_api)
+
+    def attachments(self):
+        return self.slims_api.get_entities(
+            "attachment/" + self.json_entity["tableName"] + "/" + str(self.json_entity["pk"]))
+
+    def follow(self, link_name):
+        for link in self.json_entity["links"]:
+            if link["rel"] == link_name:
+                href = link["href"]
+                entities = self.slims_api.get_entities(href)
+                if link_name.startswith("-"):
+                    return entities
+                else:
+                    return entities[0]
+        raise KeyError(str(link_name) + "not found in the list of links")
+
+
+class Attachment(Record):
+
+    def __init__(self, json_entity, slims_api):
+        super(Attachment, self).__init__(json_entity, slims_api)
+
+    def get_local_path(self):
+        return os.path.join(self.slims_api.repo_location, self.attm_path.value)
 
 
 class Column(object):

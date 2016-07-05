@@ -1,11 +1,10 @@
 from genohm.slims.slims import Slims
-import os
 
-slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
+slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/Users/Ruben/RepoRepo/deplancke38")
+
 records = slims.fetch("Content", "cntn_barCode=00000004")
 for record in records:
-    print(record.cntn_id.value)
+    print(record.follow("cntn_fk_contentType").cntp_name.value)
 
-locations = slims.fetch("Location", "lctn_barCode=00000001")
-for record in locations:
-    print(record.lctn_barCode.value)
+    for derivation in record.follow("-cntn_fk_originalContent"):
+        print derivation.cntn_id.value

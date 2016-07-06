@@ -35,13 +35,14 @@ class SlimsApi(object):
         self.password = password
         self.repo_location = repo_location
 
-    def get_entities(self, url):
+    def get_entities(self, url, body=None):
         if not url.startswith(self.url):
             url = self.url + url
 
         response = requests.get(url,
                                 auth=(self.username, self.password),
-                                headers=SlimsApi._headers()).json()
+                                headers=SlimsApi._headers(),
+                                json=body).json()
         records = []
         for entity in response["entities"]:
             if entity["tableName"] == "Attachment":
@@ -72,7 +73,17 @@ class Slims(object):
         self.operations = {}
 
     def fetch(self, table, criteria):
-        return self.slims_api.get_entities(table + "?" + criteria)
+        body = {
+            "criteria": criteria.to_dict()
+        }
+        return self.slims_api.get_entities(table + "/advanced", body=body)
+
+    def fetch_by_pk(self, table, pk):
+        entities = self.slims_api.get_entities(table + "/" + pk)
+        if len(entities) > 0:
+            return entities[0]
+        else:
+            return None
 
     def add_flow(self, flow_id, name, usage, steps):
         step_dicts = []
@@ -132,7 +143,10 @@ class Record(object):
                 if link_name.startswith("-"):
                     return entities
                 else:
-                    return entities[0]
+                    if len(entities) > 0:
+                        return entities[0]
+                    else:
+                        return None
         raise KeyError(str(link_name) + "not found in the list of links")
 
 
@@ -142,7 +156,10 @@ class Attachment(Record):
         super(Attachment, self).__init__(json_entity, slims_api)
 
     def get_local_path(self):
-        return os.path.join(self.slims_api.repo_location, self.attm_path.value)
+        if self.slims_api.repo_location:
+            return os.path.join(self.slims_api.repo_location, self.attm_path.value)
+        else:
+            raise RuntimeError("no repo_location configured")
 
 
 class Column(object):

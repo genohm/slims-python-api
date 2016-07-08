@@ -79,7 +79,7 @@ class Slims(object):
         return self.slims_api.get_entities(table + "/advanced", body=body)
 
     def fetch_by_pk(self, table, pk):
-        entities = self.slims_api.get_entities(table + "/" + pk)
+        entities = self.slims_api.get_entities(table + "/" + str(pk))
         if len(entities) > 0:
             return entities[0]
         else:

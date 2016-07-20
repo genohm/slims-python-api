@@ -72,9 +72,27 @@ class Slims(object):
         self.name = name
         self.operations = {}
 
-    def fetch(self, table, criteria):
+    def fetch(self, table, criteria, sort=[], start=None, end=None):
+        """Allows to fetch data that match criterion
+
+        Parameters:
+        self -- instance parameter
+        table -- name of the table in which the fetch takes place
+        criteria -- criteria to fetch
+                    it calls criteria functions
+                    criterion can be added using one junction function followed
+                    by add(criteria) function
+        sort -- list of the fields used to sort
+        start -- number representing the position in a list of the first result to display
+        end -- number representing the position in a list of the last result to display
+
+
+        """
         body = {
-            "criteria": criteria.to_dict()
+            "criteria": criteria.to_dict(),
+            "sortBy": sort,
+            "startRow": start,
+            "endRow": end,
         }
         return self.slims_api.get_entities(table + "/advanced", body=body)
 

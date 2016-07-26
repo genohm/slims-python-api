@@ -1,3 +1,4 @@
 flask
 requests
 enum34
+sphinx

@@ -1,2 +1,4 @@
 .idea
 *.pyc
+*.rst
+_build

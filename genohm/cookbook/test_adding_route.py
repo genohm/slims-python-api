@@ -23,7 +23,18 @@ slims.add_flow(
             name="first step",
             action=execute_first_step,
             input=[
-                text_input("name", "label")
+                # multiple_choice_with_value_map_input("name", "label", "Content")
+                # single_choice_with_value_map_input("name", "label", "Content")
+                # rich_text_input("Text", "Text")
+                # boolean_input("Boolean", "Boolean")
+                # time_input("Time", "time")
+                date_input("Date", "Date")
+                # date_time_input("DateTime", "DateTime")
+                # multiple_choice_with_field_list_input("Location", "select location",
+                #                                        ["Hi", "Good Morning", "Hello"], [None, None, None])
+                # text_input("name", "label", defaultValue= "a default value")
+                # default_value(integer_input("name1", "label1"), "19")
+                # table_input("name", "label", [text_input("name", "label"), boolean_input("boolean", "boolean")])
             ],
             output=[
                 file_output()

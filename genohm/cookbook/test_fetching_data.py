@@ -1,6 +1,7 @@
 from genohm.slims.slims import Slims
 from genohm.slims.criteria import *
 from genohm.slims.util import *
+from genohm.slims.eln import *
 
 slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/Users/Ruben/RepoRepo/deplancke38")
 
@@ -22,7 +23,7 @@ print is_not_null("cntn_cf_lenght").to_dict()
 # records = slims.fetch("Content", equalsIgnoreCase("cntn_id", "SAMPLE1"))
 # records = slims.fetch("Content", is_na("cntn_cf_treatment"))
 # records = slims.fetch("Content", is_not_null("cntn_cf_lenght"), ["cntn_cf_lenght", "cntn_id"])
-records = slims.fetch("Content", is_not_null("cntn_createdOn"), ["cntn_createdOn", "cntn_id"], 15, 30)
+# records = slims.fetch("Content", is_not_null("cntn_createdOn"), ["cntn_createdOn", "cntn_id"], 15, 30)
 # records = slims.fetch("Content", is_not_null("cntn_fk_disease"), ["cntn_pk", "cntn_id"])
 # records = slims.fetch("Content", starts_with("cntn_id", "0"))
 # records = slims.fetch("Content", is_na("cntn_cf_treatment"))
@@ -30,10 +31,12 @@ records = slims.fetch("Content", is_not_null("cntn_createdOn"), ["cntn_createdOn
 # records = slims.fetch("Content", disjunction()
 #                      .add(not_equals("cntn_id", "chemical_0000"))
 #                      .add(starts_with("cntn_id", "sample")))
-
+records = slims.fetch("Content", starts_with("cntn_id", "00"))
+# steps = content_to_project(records)
 # DISPLAY RESULTS
 # display_results(records, ["cntn_id"])
-# display_results(records, ["cntn_id", "cntn_cf_presence"])
+display_results(records, ["cntn_id", "cntn_createdOn"])
 # display_results(records, ["cntn_quantity", "cntn_id"])
-display_results(records, ["cntn_createdOn", "cntn_id"])
+# display_results(steps, ["prjc_name"]) #xprs_name
+# display_results(records, ["cntn_id", "cntn_createdOn"])
 # display_results(records, ["cntn_id", "cntn_createdOn"], 5)

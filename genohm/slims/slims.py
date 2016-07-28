@@ -87,10 +87,8 @@ class Slims(object):
                     criterion can be added using one junction function followed
                     by add(criteria) function
         sort -- list of the fields used to sort
-        start -- number representing the position in a list of the first result to display
-        end -- number representing the position in a list of the last result to display
-
-
+        start --  number representing the position in a list of the first result to display
+        end  --  number representing the position in a list of the last result to display
         """
         body = {
             "criteria": criteria.to_dict(),
@@ -113,6 +111,15 @@ class Slims(object):
         return Record(new_values, self.slims_api)
 
     def add_flow(self, flow_id, name, usage, steps):
+        """Allows to add a SLimsGate flow in SLims interface.
+
+        Parameters:
+        self -- instance parameter
+        flow_id -- name of the id of the flow_id
+        name -- name of the flow that will be displayed in SLims interface
+        usage -- name indicating in which table the flow can be called
+        steps -- a list of steps elements that needs to be executed
+        """
         step_dicts = []
         i = 0
         for step in steps:

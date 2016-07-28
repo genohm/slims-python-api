@@ -8,7 +8,18 @@ logger = logging.getLogger('genohm.slims.step')
 
 
 class Step(object):
+    """The step class defines the step properties of a SLimsGate flow.
 
+    Parameters:
+    name -- name of the step
+    action -- action done by the step
+    async -- a boolean that give the asynchronicity of the step
+             its default value is False
+    hidden -- a boolean that says if the step needs to be hidden
+              its default value is False
+    input -- a list of input parameters
+    output -- a list of output parameters
+    """
     def __init__(self, name, action, async=False, hidden=False, input=[], output=[]):
         self.action = action
         self.name = name
@@ -62,9 +73,347 @@ class StepExecutionException(Exception):
     pass
 
 
-def text_input(name, label):
-    return {'name': name, 'label': label, 'type': 'STRING'}
+def text_input(name, label, **kwargs):
+    """Allows to have short text input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': 'STRING'}
+    values.update(kwargs)
+    return values
+
+
+def single_choice_with_value_map_input(name, label, table=None, filtered=None,
+                                       reference=None, fixed_choice_customer_field=None,
+                                       **kwargs):
+    """Allows to have a single choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    table -- the table of the possible choices to display
+             its default value is None
+    filtered -- the filter applied on the list of displayed choice
+                its default value is None
+    reference -- the name of the valueMap of the output of the previous step_dicts
+                 its default value is None
+    fixed_choice_customer_field -- the name of a customer field
+                                   its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+    value_map = {
+        'filter': filtered,
+        'reference': reference,
+        'table': table,
+        'fixedChoiceCustomField': fixed_choice_customer_field
+    }
+    values = {
+        'name': name,
+        'label': label,
+        'type': 'SINGLE_CHOICE',
+        'valueMap': value_map
+    }
+    values.update(kwargs)
+    return values
+
+
+def single_choice_with_field_list_input(name, label, fieldelements, fieldtype=None,
+                                        **kwargs):
+    """Allows to have a single choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    fieldelements -- the list of elements in which the choice needs to be made, usually strings
+    fieldtype -- the type of the field elements
+                 its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+    entries = []
+    fieldlist = {}
+    i = 0
+    for fieldelement in fieldelements:
+        if fieldtype is not None:
+            fieldlist.update({'type': fieldtype[i]})
+        else:
+            fieldlist.update({'type': None})
+        fieldlist.update({'field': fieldelements[i]})
+        entries.append(fieldlist.copy())
+        i = i + 1
+
+    values = {
+        'name': name,
+        'label': label,
+        'type': 'SINGLE_CHOICE',
+        'fieldList': {
+            'entries': entries
+            }
+    }
+    values.update(kwargs)
+    return values
+
+
+def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
+                                         reference=None, fixed_choice_customer_field=None,
+                                         **kwargs):
+    """Allows to have a multiple choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    table -- the table of the possible choices to display
+             its default value is None
+    filtered -- the filter applied on the list of displayed choice
+                its default value is None
+    reference -- the name of the valueMap of the output of the previous step_dicts
+                 its default value is None
+    fixed_choice_customer_field -- the name of a customer field
+                                   its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+    value_map = {
+        'filter': filtered,
+        'reference': reference,
+        'table': table,
+        'fixedChoiceCustomField': fixed_choice_customer_field
+    }
+    values = {
+        'name': name,
+        'label': label,
+        'type': 'MULTIPLE_CHOICE',
+        'valueMap': value_map
+    }
+    values.update(kwargs)
+    return values
+
+
+def multiple_choice_with_field_list_input(name, label, fieldelements, fieldtype=None, **kwargs):
+    """Allows to have a multiple choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    fieldelements -- the list of elements in which the choice needs to be made, usually strings
+    fieldtype -- the type of the field elements
+                 its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+    entries = []
+    fieldlist = {}
+    i = 0
+    for fieldelement in fieldelements:
+        if fieldtype is not None:
+            fieldlist.update({'type': fieldtype[i]})
+        else:
+            fieldlist.update({'type': None})
+        fieldlist.update({'field': fieldelements[i]})
+        entries.append(fieldlist.copy())
+        i = i + 1
+
+    values = {
+        'name': name,
+        'label': label,
+        'type': 'MULTIPLE_CHOICE',
+        'fieldList': {
+            'entries': entries
+            }
+    }
+    values.update(kwargs)
+    return values
+
+
+def date_input(name, label, **kwargs):
+    """Allows to havea date input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "DATE"}
+    values.update(kwargs)
+    return values
+
+
+def date_time_input(name, label, **kwargs):
+    """Allows to have a date and time input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "DATETIME"}
+    values.update(kwargs)
+    return values
+
+
+def time_input(name, label, **kwargs):
+    """Allows to have a time input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "TIME"}
+    values.update(kwargs)
+    return values
+
+
+def boolean_input(name, label, **kwargs):
+    """Allows to have a yes or no choice input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "BOOLEAN"}
+    values.update(kwargs)
+    return values
+
+
+def rich_text_input(name, label, **kwargs):
+    """Allows to have rich text input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "TEXT"}
+    values.update(kwargs)
+    return values
+
+
+def integer_input(name, label, **kwargs):
+    """Allows to have integer input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "INTEGER"}
+    values.update(kwargs)
+    return values
+
+
+def float_input(name, label, **kwargs):
+    """Allows to have float input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "FLOAT"}
+    values.update(kwargs)
+    return values
+
+
+def password_input(name, label, **kwargs):
+    """Allows to have a password input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "PASSWORD"}
+    values.update(kwargs)
+    return values
+
+
+def table_input(name, label, subparameters, **kwargs):
+    """Allows to have a table input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    subparameters -- the list of paramteres that need to be in the table
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "TABLE", 'subParameters': subparameters}
+    values.update(kwargs)
+    return values
+
+
+# Message display by SLims
+# File input and output together are currently not supported
+def file_input(name, label, **kwargs):
+    """Allows to have a file input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+
+    Returns: a dictionnary containing all these elements
+    """
+    values = {'name': name, 'label': label, 'type': "FILE"}
+    values.update(kwargs)
+    return values
 
 
 def file_output():
+    """Allows to have a file output for SLimsGate.
+
+    Returns: a dictionnary
+    """
     return {'name': 'file', 'type': 'FILE'}
+
+
+def value_map_output(name, datatype):
+    """Allows to have a value map output for SLimsGate.
+
+    Parameters:
+    name -- the name of the output
+    datatype -- the label of the output
+
+    Returns: a dictionnary containing all these elements
+    """
+    return {'name': name, 'datatype': datatype, 'type': 'VALUEMAP'}

@@ -4,7 +4,6 @@ from genohm.slims.util import *
 
 slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/Users/Ruben/RepoRepo/deplancke38")
 
-
 # To print the value of the value of operator, fieldname and value used by the function
 # print is_na("cntn_cf_treatment").to_dict()
 print is_not_null("cntn_cf_lenght").to_dict()

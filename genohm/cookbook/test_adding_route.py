@@ -2,9 +2,6 @@ from genohm.slims.slims import Slims
 from genohm.slims.step import *
 from genohm.slims.output import file_value
 import time
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 def execute_first_step(flow_run):
@@ -13,8 +10,9 @@ def execute_first_step(flow_run):
         flow_run.log("Hallo " + str(i))
     return file_value("/Users/ruben/git/slims-python-api/dependencies.txt")
 
+print text_input("name", "label")
 
-slims = Slims("testSlims", "http://localhost:9999", "ruben", "ruben")
+slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
 
 slims.add_flow(
     flow_id="myFlow",
@@ -24,7 +22,6 @@ slims.add_flow(
         Step(
             name="first step",
             action=execute_first_step,
-            async=True,
             input=[
                 text_input("name", "label")
             ],

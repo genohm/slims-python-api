@@ -56,6 +56,10 @@ class SlimsApi(object):
         return requests.post(self.url + url, json=body,
                              auth=(self.username, self.password), headers=SlimsApi._headers())
 
+    def put(self, url, body):
+        return requests.put(self.url + url, json=body,
+                            auth=(self.username, self.password), headers=SlimsApi._headers())
+
     @staticmethod
     def _headers():
         try:
@@ -102,6 +106,11 @@ class Slims(object):
             return entities[0]
         else:
             return None
+
+    def add(self, table, values):
+        response = self.slims_api.put(url=table, body=values).json()
+        new_values = response["entities"][0]
+        return Record(new_values, self.slims_api)
 
     def add_flow(self, flow_id, name, usage, steps):
         step_dicts = []

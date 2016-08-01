@@ -110,7 +110,7 @@ class Slims(object):
         new_values = response["entities"][0]
         return Record(new_values, self.slims_api)
 
-    def add_flow(self, flow_id, name, usage, steps):
+    def add_flow(self, flow_id, name, usage, steps, testing=False):
         """Allows to add a SLimsGate flow in SLims interface.
 
         Parameters:
@@ -138,7 +138,8 @@ class Slims(object):
         else:
             print("Could not register " + flow_id + "(" + str(response.status_code) + ")")
 
-        flask_thread()
+        if not testing:
+            flask_thread()
 
     def _execute_operation(self, operation, step, data):
         flow_run = FlowRun(self.slims_api, step, data)

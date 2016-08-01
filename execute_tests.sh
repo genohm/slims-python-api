@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m unittest discover -v genohm/tests/  
+nosetests genohm/tests/  

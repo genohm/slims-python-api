@@ -73,6 +73,12 @@ class StepExecutionException(Exception):
     pass
 
 
+def _simple_input(name, label, type, **kwargs):
+    values = {'name': name, 'label': label, 'type': type}
+    values.update(kwargs)
+    return values
+
+
 def text_input(name, label, **kwargs):
     """Allows to have short text input for SLimsGate.
 
@@ -84,7 +90,62 @@ def text_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': 'STRING'}
+    return _simple_input(name, label, 'STRING', **kwargs)
+
+
+def single_choice_with_field_list_input(name, label, fieldelements, fieldtype=None,
+                                        **kwargs):
+    """Allows to have a single choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    fieldelements -- the list of elements in which the choice needs to be made, usually strings
+    fieldtype -- the type of the field elements
+                 its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+
+    return _choice_with_field_list_input(name, label, "SINGLE_CHOICE", fieldelements, fieldtype, **kwargs)
+
+
+def multiple_choice_with_field_list_input(name, label, fieldelements, fieldtype=None, **kwargs):
+    """Allows to have a multiple choice out of a list input for SLimsGate.
+
+    Parameters:
+    name -- the name of the input
+    label -- the label of the input
+    fieldelements -- the list of elements in which the choice needs to be made, usually strings
+    fieldtype -- the type of the field elements
+                 its default value is None
+    **kwargs -- every additional and optional parameter
+                it needs to be of the form defaultValue="it is a default value"
+    Returns: a dictionnary containing all these elements
+    """
+    return _choice_with_field_list_input(name, label, "MULTIPLE_CHOICE", fieldelements, fieldtype, **kwargs)
+
+
+def _choice_with_field_list_input(name, label, datatype, fieldelements, fieldtype=None, **kwargs):
+    entries = []
+    i = 0
+    for fieldelement in fieldelements:
+        field = {}
+        if fieldtype is not None:
+            field['type'] = fieldtype[i]
+        else:
+            field['type'] = None
+        field['field'] = fieldelements[i]
+        entries.append(field)
+        i = i + 1
+
+    values = {
+        'name': name,
+        'label': label,
+        'type': datatype,
+        'fieldList': {'entries': entries}
+    }
     values.update(kwargs)
     return values
 
@@ -109,58 +170,9 @@ def single_choice_with_value_map_input(name, label, table=None, filtered=None,
                 it needs to be of the form defaultValue="it is a default value"
     Returns: a dictionnary containing all these elements
     """
-    value_map = {
-        'filter': filtered,
-        'reference': reference,
-        'table': table,
-        'fixedChoiceCustomField': fixed_choice_customer_field
-    }
-    values = {
-        'name': name,
-        'label': label,
-        'type': 'SINGLE_CHOICE',
-        'valueMap': value_map
-    }
-    values.update(kwargs)
-    return values
 
-
-def single_choice_with_field_list_input(name, label, fieldelements, fieldtype=None,
-                                        **kwargs):
-    """Allows to have a single choice out of a list input for SLimsGate.
-
-    Parameters:
-    name -- the name of the input
-    label -- the label of the input
-    fieldelements -- the list of elements in which the choice needs to be made, usually strings
-    fieldtype -- the type of the field elements
-                 its default value is None
-    **kwargs -- every additional and optional parameter
-                it needs to be of the form defaultValue="it is a default value"
-    Returns: a dictionnary containing all these elements
-    """
-    entries = []
-    fieldlist = {}
-    i = 0
-    for fieldelement in fieldelements:
-        if fieldtype is not None:
-            fieldlist.update({'type': fieldtype[i]})
-        else:
-            fieldlist.update({'type': None})
-        fieldlist.update({'field': fieldelements[i]})
-        entries.append(fieldlist.copy())
-        i = i + 1
-
-    values = {
-        'name': name,
-        'label': label,
-        'type': 'SINGLE_CHOICE',
-        'fieldList': {
-            'entries': entries
-            }
-    }
-    values.update(kwargs)
-    return values
+    return _choice_with_value_map_input(
+        name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_customer_field, *kwargs)
 
 
 def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
@@ -183,6 +195,18 @@ def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
                 it needs to be of the form defaultValue="it is a default value"
     Returns: a dictionnary containing all these elements
     """
+    return _choice_with_value_map_input(
+        name, label, "MULTIPLE_CHOICE", table, filtered, reference, fixed_choice_customer_field, *kwargs)
+
+
+def _choice_with_value_map_input(name,
+                                 label,
+                                 datatype,
+                                 table,
+                                 filtered,
+                                 reference,
+                                 fixed_choice_customer_field,
+                                 **kwargs):
     value_map = {
         'filter': filtered,
         'reference': reference,
@@ -192,45 +216,8 @@ def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
     values = {
         'name': name,
         'label': label,
-        'type': 'MULTIPLE_CHOICE',
+        'type': datatype,
         'valueMap': value_map
-    }
-    values.update(kwargs)
-    return values
-
-
-def multiple_choice_with_field_list_input(name, label, fieldelements, fieldtype=None, **kwargs):
-    """Allows to have a multiple choice out of a list input for SLimsGate.
-
-    Parameters:
-    name -- the name of the input
-    label -- the label of the input
-    fieldelements -- the list of elements in which the choice needs to be made, usually strings
-    fieldtype -- the type of the field elements
-                 its default value is None
-    **kwargs -- every additional and optional parameter
-                it needs to be of the form defaultValue="it is a default value"
-    Returns: a dictionnary containing all these elements
-    """
-    entries = []
-    fieldlist = {}
-    i = 0
-    for fieldelement in fieldelements:
-        if fieldtype is not None:
-            fieldlist.update({'type': fieldtype[i]})
-        else:
-            fieldlist.update({'type': None})
-        fieldlist.update({'field': fieldelements[i]})
-        entries.append(fieldlist.copy())
-        i = i + 1
-
-    values = {
-        'name': name,
-        'label': label,
-        'type': 'MULTIPLE_CHOICE',
-        'fieldList': {
-            'entries': entries
-            }
     }
     values.update(kwargs)
     return values
@@ -247,9 +234,7 @@ def date_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "DATE"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'DATE', **kwargs)
 
 
 def date_time_input(name, label, **kwargs):
@@ -263,9 +248,7 @@ def date_time_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "DATETIME"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'DATETIME', **kwargs)
 
 
 def time_input(name, label, **kwargs):
@@ -279,9 +262,7 @@ def time_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "TIME"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'TIME', **kwargs)
 
 
 def boolean_input(name, label, **kwargs):
@@ -295,9 +276,7 @@ def boolean_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "BOOLEAN"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'BOOLEAN', **kwargs)
 
 
 def rich_text_input(name, label, **kwargs):
@@ -311,9 +290,7 @@ def rich_text_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "TEXT"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'TEXT', **kwargs)
 
 
 def integer_input(name, label, **kwargs):
@@ -327,9 +304,7 @@ def integer_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "INTEGER"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'INTEGER', **kwargs)
 
 
 def float_input(name, label, **kwargs):
@@ -343,9 +318,7 @@ def float_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "FLOAT"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'FLOAT', **kwargs)
 
 
 def password_input(name, label, **kwargs):
@@ -394,9 +367,7 @@ def file_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "FILE"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, "FILE", **kwargs)
 
 
 def file_output():

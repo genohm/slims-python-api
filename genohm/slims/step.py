@@ -332,9 +332,7 @@ def password_input(name, label, **kwargs):
 
     Returns: a dictionnary containing all these elements
     """
-    values = {'name': name, 'label': label, 'type': "PASSWORD"}
-    values.update(kwargs)
-    return values
+    return _simple_input(name, label, 'PASSWORD', **kwargs)
 
 
 def table_input(name, label, subparameters, **kwargs):

@@ -157,9 +157,6 @@ class Record(object):
             column = Column(json_column)
             self.__dict__[column.name] = column
 
-    def column(self, name):
-        return self.__dict__[name]
-
     def update(self, values):
         url = self.json_entity["tableName"] + "/" + str(self.json_entity["pk"])
         response = self.slims_api.post(url=url, body=values).json()

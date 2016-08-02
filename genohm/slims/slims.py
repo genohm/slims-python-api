@@ -4,7 +4,7 @@ from flask import request as flaskrequest
 from .flowrun import FlowRun
 from werkzeug.local import Local
 import os
-
+import base64
 import requests
 
 app = Flask(__name__)
@@ -52,6 +52,10 @@ class SlimsApi(object):
 
         return records
 
+    def get(self, url):
+        return requests.get(self.url + url,
+                            auth=(self.username, self.password), headers=SlimsApi._headers())
+
     def post(self, url, body):
         return requests.post(self.url + url, json=body,
                              auth=(self.username, self.password), headers=SlimsApi._headers())
@@ -80,7 +84,6 @@ class Slims(object):
         """Allows to fetch data that match criterion
 
         Parameters:
-        self -- instance parameter
         table -- name of the table in which the fetch takes place
         criteria -- criteria to fetch
                     it calls criteria functions
@@ -114,7 +117,6 @@ class Slims(object):
         """Allows to add a SLimsGate flow in SLims interface.
 
         Parameters:
-        self -- instance parameter
         flow_id -- name of the id of the flow_id
         name -- name of the flow that will be displayed in SLims interface
         usage -- name indicating in which table the flow can be called
@@ -158,14 +160,48 @@ class Record(object):
             self.__dict__[column.name] = column
 
     def update(self, values):
-        url = self.json_entity["tableName"] + "/" + str(self.json_entity["pk"])
+        url = self.table_name() + "/" + str(self.pk())
         response = self.slims_api.post(url=url, body=values).json()
         new_values = response["entities"][0]
         return Record(new_values, self.slims_api)
 
+    def table_name(self):
+        return self.json_entity["tableName"]
+
+    def pk(self):
+        return self.json_entity["pk"]
+
     def attachments(self):
         return self.slims_api.get_entities(
             "attachment/" + self.json_entity["tableName"] + "/" + str(self.json_entity["pk"]))
+
+    def add_attachment(self, name, byte_array):
+        """Adds an attachment to a record (over HTTP)
+
+        Example uses:
+          * content.add_attachment("test.txt", b"Hi from python")
+          * with open(file_name, 'rb') as to_upload:
+                content.add_attachment("test.txt", to_upload.read())
+
+        Parameters:
+        name -- The name of the attachment
+        byte_array -- The binary content of the attachment
+        Returns:
+        The primary key of the added attachment
+        """
+
+        body = {
+            "attm_name": name,
+            "atln_recordPk": self.pk(),
+            "atln_recordTable": self.table_name(),
+            "contents": base64.b64encode(byte_array).decode("utf-8")
+        }
+        response = self.slims_api.post(url="repo", body=body)
+        location = response.headers['Location']
+        return int(location[location.rfind("/") + 1:])
+
+    def column(self, column_name):
+        return self.__dict__[column_name]
 
     def follow(self, link_name):
         for link in self.json_entity["links"]:
@@ -192,6 +228,19 @@ class Attachment(Record):
             return os.path.join(self.slims_api.repo_location, self.attm_path.value)
         else:
             raise RuntimeError("no repo_location configured")
+
+    def download_to(self, location):
+        """Downloads an attachment to a location on disk
+
+        Example uses:
+          * attachment.download_to("test.txt")
+
+        Parameters:
+        location -- The name of the file the attachment should be downloaded to
+        """
+        with open(location, 'wb') as destination:
+            response = self.slims_api.get("repo/" + str(self.pk()))
+            destination.write(response.content)
 
 
 class Column(object):

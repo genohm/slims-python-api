@@ -1,4 +1,3 @@
 flask
 requests
 enum34
-sphinx==1.4.4

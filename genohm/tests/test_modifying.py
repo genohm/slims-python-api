@@ -49,3 +49,37 @@ class Test_Modifying(unittest.TestCase):
 
         added = slims.add("Content", {"test": "foo"})
         self.assertIsInstance(added, Record)
+
+    @responses.activate
+    def test_remove_success(self):
+        responses.add(
+            responses.DELETE,
+            'http://localhost:9999/rest/Content/1',
+            content_type='application/json',
+        )
+
+        slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
+        record = Record({"pk": 1,
+                         "tableName": "Content",
+                         "columns": []},
+                        slims.slims_api)
+
+        record.remove()
+
+    @responses.activate
+    def test_remove_failure(self):
+        responses.add(
+            responses.DELETE,
+            'http://localhost:9999/rest/Content/1',
+            content_type='application/json',
+            body="Could not delete",
+            status=400
+        )
+
+        slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
+        record = Record({"pk": 1,
+                         "tableName": "Content",
+                         "columns": []},
+                        slims.slims_api)
+
+        self.assertRaises(Exception, record.remove)

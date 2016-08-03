@@ -64,6 +64,10 @@ class SlimsApi(object):
         return requests.put(self.url + url, json=body,
                             auth=(self.username, self.password), headers=SlimsApi._headers())
 
+    def delete(self, url):
+        return requests.delete(self.url + url,
+                               auth=(self.username, self.password), headers=SlimsApi._headers())
+
     @staticmethod
     def _headers():
         try:
@@ -164,6 +168,12 @@ class Record(object):
         response = self.slims_api.post(url=url, body=values).json()
         new_values = response["entities"][0]
         return Record(new_values, self.slims_api)
+
+    def remove(self):
+        url = self.table_name() + "/" + str(self.pk())
+        response = self.slims_api.delete(url=url)
+        if response.status_code != 200:
+            raise Exception("Delete failed: " + response.text)
 
     def table_name(self):
         return self.json_entity["tableName"]

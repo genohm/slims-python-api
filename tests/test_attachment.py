@@ -3,9 +3,9 @@ import responses
 import json
 import tempfile
 
-from genohm.slims.slims import Slims
-from genohm.slims.slims import Attachment
-from genohm.slims.slims import Record
+from slims.slims import Slims
+from slims.slims import Attachment
+from slims.slims import Record
 
 
 class Test_Attachments(unittest.TestCase):

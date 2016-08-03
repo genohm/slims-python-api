@@ -1,6 +1,6 @@
 import unittest
 
-from genohm.slims.criteria import *
+from slims.criteria import *
 
 
 class Test_Criteria(unittest.TestCase):

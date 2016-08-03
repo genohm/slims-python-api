@@ -16,12 +16,12 @@ def display_results(records, fields, number=None):
     Returns: a list of elements with their selected fields
     """
 
-    print (' '.join(fields))
+    print(' '.join(fields))
     if number is None or number >= len(records):
         for record in records:
             display_field_value(record, fields)
     else:
-        print ("Number of displayed results: " + str(number) + '\n')
+        print("Number of displayed results: " + str(number) + '\n')
         for record in records[:number]:
             display_field_value(record, fields)
     return None

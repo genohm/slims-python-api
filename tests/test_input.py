@@ -1,6 +1,6 @@
 import unittest
 
-from genohm.slims.step import *
+from slims.step import *
 
 
 class Test_Slimsgate_Input(unittest.TestCase):

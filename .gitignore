@@ -1,7 +1,10 @@
 .idea
 *.pyc
-*.rst
 _build
 .coverage
 htmlcov
 nosetests*
+.tox
+src/slims_python_api.egg-info/
+/cover-*/
+/dist/

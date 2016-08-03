@@ -4,10 +4,10 @@ import json
 import requests
 import responses
 
-from genohm.slims.slims import Slims
-from genohm.slims.slims import Record
-from genohm.slims.slims import Attachment
-from genohm.slims.criteria import *
+from slims.slims import Slims
+from slims.slims import Record
+from slims.slims import Attachment
+from slims.criteria import *
 
 
 class Test_Fetching_Data(unittest.TestCase):

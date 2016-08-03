@@ -4,9 +4,9 @@ import json
 import requests
 import responses
 
-from genohm.slims.slims import Slims
-from genohm.slims.step import *
-from genohm.slims.criteria import *
+from slims.slims import Slims
+from slims.step import *
+from slims.criteria import *
 
 
 class Test_Adding_Flow(unittest.TestCase):

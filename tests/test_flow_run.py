@@ -4,9 +4,9 @@ import json
 import requests
 import responses
 
-from genohm.slims.slims import Slims
-from genohm.slims.flowrun import FlowRun
-from genohm.slims.flowrun import Status
+from slims.slims import Slims
+from slims.flowrun import FlowRun
+from slims.flowrun import Status
 
 
 class Test_Flow_Run(unittest.TestCase):

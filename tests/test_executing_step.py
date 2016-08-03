@@ -3,10 +3,10 @@ import json
 
 from mock import MagicMock
 
-from genohm.slims.slims import Slims
-from genohm.slims.step import *
-from genohm.slims.criteria import *
-from genohm.slims.flowrun import *
+from slims.slims import Slims
+from slims.step import *
+from slims.criteria import *
+from slims.flowrun import *
 
 
 class Test_Executing_Step(unittest.TestCase):

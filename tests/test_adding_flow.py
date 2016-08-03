@@ -1,12 +1,11 @@
 import unittest
 import json
-
-import requests
 import responses
 
 from slims.slims import Slims
-from slims.step import *
-from slims.criteria import *
+from slims.step import file_output
+from slims.step import text_input
+from slims.step import Step
 
 
 class Test_Adding_Flow(unittest.TestCase):

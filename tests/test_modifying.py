@@ -1,12 +1,8 @@
 import unittest
-import json
-
-import requests
 import responses
 
 from slims.slims import Slims
 from slims.slims import Record
-from slims.criteria import *
 
 
 class Test_Modifying(unittest.TestCase):

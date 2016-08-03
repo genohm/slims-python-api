@@ -1,13 +1,11 @@
 import unittest
 import json
-
-import requests
 import responses
 
 from slims.slims import Slims
 from slims.slims import Record
 from slims.slims import Attachment
-from slims.criteria import *
+from slims.criteria import equals
 
 
 class Test_Fetching_Data(unittest.TestCase):
@@ -78,6 +76,7 @@ class Test_Fetching_Data(unittest.TestCase):
                                sort=["cntn_createdOn"],
                                start=0,
                                end=1)
+        self.assertEquals(entities, [])
 
     @responses.activate
     def test_fetch_incoming_link(self):

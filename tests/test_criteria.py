@@ -1,6 +1,11 @@
 import unittest
 
-from slims.criteria import *
+from slims.criteria import between_inclusive
+from slims.criteria import conjunction
+from slims.criteria import equals
+from slims.criteria import is_one_of
+from slims.criteria import is_not
+from slims.criteria import starts_with
 
 
 class Test_Criteria(unittest.TestCase):

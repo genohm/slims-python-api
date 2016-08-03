@@ -1,12 +1,13 @@
 import unittest
-import json
 
 from mock import MagicMock
 
-from slims.slims import Slims
-from slims.step import *
-from slims.criteria import *
-from slims.flowrun import *
+from slims.step import text_input
+from slims.step import file_output
+from slims.step import Step
+from slims.step import StepExecutionException
+from slims.flowrun import Status
+from slims.flowrun import FlowRun
 
 
 class Test_Executing_Step(unittest.TestCase):
@@ -34,7 +35,7 @@ class Test_Executing_Step(unittest.TestCase):
 
     def test_fail(self):
         def execute_first_step(flow_run):
-            raise Error("went wrong")
+            raise Exception("went wrong")
 
         step = Step(name="first step",
                     action=execute_first_step,

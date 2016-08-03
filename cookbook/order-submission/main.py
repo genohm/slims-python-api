@@ -1,6 +1,4 @@
 import web
-import hashlib
-import uuid
 from web import form
 
 render = web.template.render('genohm/cookbook/order-submission/templates/')

@@ -1,5 +1,8 @@
 from genohm.slims.slims import Slims
-from genohm.slims.step import *
+from genohm.slims.step import text_input
+from genohm.slims.step import date_input
+from genohm.slims.step import file_output
+from genohm.slims.step import Step
 from genohm.slims.output import file_value
 import time
 
@@ -10,7 +13,7 @@ def execute_first_step(flow_run):
         flow_run.log("Hallo " + str(i))
     return file_value("/Users/ruben/git/slims-python-api/dependencies.txt")
 
-print text_input("name", "label")
+print(text_input("name", "label"))
 
 slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
 

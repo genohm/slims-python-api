@@ -1,7 +1,5 @@
 import unittest
 import json
-
-import requests
 import responses
 
 from slims.slims import Slims

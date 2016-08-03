@@ -1,13 +1,13 @@
 from genohm.slims.slims import Slims
-from genohm.slims.criteria import *
-from genohm.slims.util import *
-from genohm.slims.eln import *
+from genohm.slims.criteria import is_not_null
+from genohm.slims.criteria import starts_with
+from genohm.slims.util import display_results
 
 slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/Users/Ruben/RepoRepo/deplancke38")
 
 # To print the value of the value of operator, fieldname and value used by the function
 # print is_na("cntn_cf_treatment").to_dict()
-print is_not_null("cntn_cf_lenght").to_dict()
+print(is_not_null("cntn_cf_lenght").to_dict())
 
 # EXAMPLE OF OPERATOR COMBINATIONS
 # records = slims.fetch("Content", is_one_of("cntn_id", ["sample1", "sample2"]))

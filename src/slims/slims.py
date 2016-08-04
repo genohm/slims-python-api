@@ -136,9 +136,12 @@ class Slims(object):
             return None
 
     def add(self, table, values):
-        response = self.slims_api.put(url=table, body=values).json()
-        new_values = response["entities"][0]
-        return Record(new_values, self.slims_api)
+        response = self.slims_api.put(url=table, body=values)
+        if response.status_code == 200:
+            new_values = response.json()["entities"][0]
+            return Record(new_values, self.slims_api)
+        else:
+            raise Exception(response.text)
 
     def add_flow(self, flow_id, name, usage, steps, testing=False):
         """Allows to add a SLimsGate flow in SLims interface.

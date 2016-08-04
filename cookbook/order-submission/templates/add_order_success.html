@@ -1,1 +1,49 @@
-<iframe width="854" height="480" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>
+$def with(new_order, new_content)
+
+<html>
+<head>
+<style>
+   td {
+    font-family:arial;
+    padding: 8px;
+  }
+  div{
+    width: 700px;
+    margin:auto;
+    margin-top: 100px;
+  }
+  p {
+    color:#232323;
+    font-size:30;
+    font-family:arial;
+    text-align:justify;
+    line-height: 170%;
+  }
+  body {
+    background-color:#f0ffec;
+  }
+
+  button{
+      float: right;
+  }
+  i{
+    font-size:25;
+  }
+</style>
+</head>
+
+<body>
+  <div>
+    <img src="static/logo-slims128.png" alt="SLims Logo" width="35%"/>
+    <p>
+      The order <i>$new_order.ordr_barCode.value</i> with order type <i>$new_order.ordr_fk_orderType.displayValue</i> has been successfully created.
+      Its status was set to <i>$new_order.ordr_fk_status.displayValue</i>.
+      Content of type <i>$new_content.cntn_fk_contentType.displayValue</i>, with barcode <i>$new_content.cntn_barCode.value</i> was created
+    </p>
+    <button onclick="window.print()" >Print this page</button>
+    <form>
+      <input TYPE="button" onClick="location.href='http://localhost:7777/'" VALUE="Add new order">
+    </form>
+  </div>
+</body>
+</html>

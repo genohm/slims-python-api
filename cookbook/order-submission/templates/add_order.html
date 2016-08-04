@@ -1,6 +1,52 @@
-$def with(form)
+$def with(form, action)
 
-<h1>Register</h1>
-<form method="POST">
-    $:form.render()
-</form>
+<head>
+<style>
+   td {
+    font-family:arial;
+    padding: 8px;
+  }
+  table {
+    border-spacing:30px;
+    margin: 0 0px 0 50px;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:100;
+    margin-bottom:50;
+    text-align:left;
+  }
+  h1 {
+    color:#50A9CC;
+    font-size:40;
+    margin: 7 0px 0 30px;
+    font-family:arial;
+  }
+  body {
+    background-color:#f0ffec;
+  }
+  div {
+    width: 600px;
+    height:0px;
+    margin:0 auto;
+    font-family:arial;
+  }
+</style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        <img src="static/folder.png" alt="SLims Logo" style="margin:0 0px 0 30px"/>
+      </td>
+      <td>
+        <h1>Create a New Order</h1>
+      </td>
+    </tr>
+  </table>
+  <div>
+    <form method="POST" action="$action">
+        $:form.render()
+    </form>
+  </div>
+</body>

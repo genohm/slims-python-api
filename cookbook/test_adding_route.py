@@ -1,21 +1,13 @@
-from genohm.slims.slims import Slims
-from genohm.slims.step import text_input
-from genohm.slims.step import date_input
-from genohm.slims.step import file_output
-from genohm.slims.step import Step
-from genohm.slims.output import file_value
-import time
+from slims.slims import Slims
+from slims.step import text_input
+from slims.step import Step
+from slims.criteria import equals
 
 
 def execute_first_step(flow_run):
-    for i in range(1, 20):
-        time.sleep(1)
-        flow_run.log("Hallo " + str(i))
-    return file_value("/Users/ruben/git/slims-python-api/dependencies.txt")
+    print(slims.fetch("Content", equals("cntn_id", "b")))
 
-print(text_input("name", "label"))
-
-slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
+slims = Slims("testSlims", "http://localhost:9999", token="abc")
 
 slims.add_flow(
     flow_id="myFlow",
@@ -26,21 +18,7 @@ slims.add_flow(
             name="first step",
             action=execute_first_step,
             input=[
-                # multiple_choice_with_value_map_input("name", "label", "Content")
-                # single_choice_with_value_map_input("name", "label", "Content")
-                # rich_text_input("Text", "Text")
-                # boolean_input("Boolean", "Boolean")
-                # time_input("Time", "time")
-                date_input("Date", "Date")
-                # date_time_input("DateTime", "DateTime")
-                # multiple_choice_with_field_list_input("Location", "select location",
-                #                                        ["Hi", "Good Morning", "Hello"], [None, None, None])
-                # text_input("name", "label", defaultValue= "a default value")
-                # default_value(integer_input("name1", "label1"), "19")
-                # table_input("name", "label", [text_input("name", "label"), boolean_input("boolean", "boolean")])
-            ],
-            output=[
-                file_output()
+                text_input("Date", "Date")
             ]
         )
     ])

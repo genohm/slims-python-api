@@ -27,6 +27,10 @@ def flask_thread():
     app.run()
 
 
+class SlimsApiException(Exception):
+    pass
+
+
 class SlimsApi(object):
 
     def __init__(self, url, username, password, repo_location):
@@ -42,15 +46,17 @@ class SlimsApi(object):
         response = requests.get(url,
                                 auth=(self.username, self.password),
                                 headers=SlimsApi._headers(),
-                                json=body).json()
+                                json=body)
         records = []
-        for entity in response["entities"]:
-            if entity["tableName"] == "Attachment":
-                records.append(Attachment(entity, self))
-            else:
-                records.append(Record(entity, self))
-
-        return records
+        if response.status_code == 200:
+            for entity in response.json()["entities"]:
+                if entity["tableName"] == "Attachment":
+                    records.append(Attachment(entity, self))
+                else:
+                    records.append(Record(entity, self))
+            return records
+        else:
+            raise SlimsApiException("Could not fetch entities: " + response.text)
 
     def get(self, url):
         return requests.get(self.url + url,
@@ -78,9 +84,15 @@ class SlimsApi(object):
 
 class Slims(object):
 
-    def __init__(self, name, url, username, password, repo_location=None):
+    def __init__(self, name, url, username=None, password=None, token=None, repo_location=None):
         slims_instances[name] = self
-        self.slims_api = SlimsApi(url, username, password, repo_location)
+        if username is not None and password is not None:
+            self.slims_api = SlimsApi(url, username, password, repo_location)
+        elif token is not None:
+            self.slims_api = SlimsApi(url, "TOKEN", token, repo_location)
+        else:
+            raise Exception("Either specify a username and a password or a token")
+
         self.name = name
         self.operations = {}
 

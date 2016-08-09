@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 
@@ -19,7 +20,14 @@ class Expression(Criterion):
         self.criterion = criterion
 
     def to_dict(self):
-        return self.criterion
+        return_value = {}
+        for key in self.criterion:
+            value = self.criterion[key]
+            if isinstance(value, datetime.datetime):
+                return_value[key] = value.isoformat()
+            else:
+                return_value[key] = value
+        return return_value
 
 
 class Junction(Criterion):
@@ -143,7 +151,7 @@ def contains(field, value):
 
 # For now, not defined in SLims
 def between_inclusive(field, start, end):
-    return Expression(_criterionBetween(field, "iBetweenInclusive", start, end))
+    return Expression(_criterionBetween(field, "betweenInclusive", start, end))
 
 
 def between_inclusive_match_case(field, start, end):

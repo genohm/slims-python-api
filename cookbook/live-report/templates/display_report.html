@@ -1,0 +1,84 @@
+$def with(lists, data)
+
+<html style="text-align:center;">
+<head>
+<style>
+   td {
+    font-family:arial;
+    border:1px solid #232323;
+    background-color:#ecf7ff;
+    padding: 8px;
+  }
+  th {
+    font-family:arial;
+    border:3px solid #232323;
+    background-color:#daefff;
+    padding: 8px;
+    font-size:20;
+  }
+  table {
+    border-spacing:30px;
+    border-width: 1px;
+    border-color: #232323;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 100px;
+  }
+  h1 {
+    color:#50A9CC;
+    font-size:40;
+    font-family:arial;
+  }
+  h2 {
+    color:#232323;
+    font-size:25;
+    font-family:arial;
+  }
+  body {
+    background-color:#f0ffec;
+  }
+  div{
+    width: 700px;
+    margin:auto;
+    margin-top: 100px;
+    margin-bottom: 200px
+  }
+  button{
+      float: right;
+  }
+</style>
+</head>
+
+<body>
+  <img src="static/logo-slims128.png" alt="SLims Logo" style="margin: 30 0px 50 0px; align: center"/>
+  <h1 style="text-align:center; margin: 0 0px 40 0px">
+    Live Report for $data
+  </h1>
+  $if len(lists) is 0:
+    <h2> There is no data to display for this period of time.</h2>
+  $else:
+    <table>
+      <tr>
+        <th>Content</th>
+        <th >Test</th>
+        <th >Result</th>
+        <th >Unit</th>
+        <th >Experiment</th>
+      </tr>
+      $for list in lists:
+      <tr>
+        $for i in range(len(list)):
+          $if i is 0:
+            <td >
+              <b>$list[i]</b>
+            </td>
+          $else:
+            <td >$list[i]</td>
+      </tr>
+    </table>
+    <div>
+      <button onclick="window.print()" >Print this page</button>
+    </div>
+</body>
+</html>

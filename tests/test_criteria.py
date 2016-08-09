@@ -19,7 +19,7 @@ class Test_Criteria(unittest.TestCase):
         self.assertEqual(expected, is_one_of("cntn_id", ["a", "b", "c"]).to_dict())
 
     def test_between(self):
-        expected = {"fieldName": "cntn_id", "operator": "iBetweenInclusive", "start": 1, "end": 2}
+        expected = {"fieldName": "cntn_id", "operator": "betweenInclusive", "start": 1, "end": 2}
         self.assertEqual(expected, between_inclusive("cntn_id", 1, 2).to_dict())
 
     def test_conjunction(self):

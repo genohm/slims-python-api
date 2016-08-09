@@ -1,0 +1,55 @@
+$def with(form)
+<html style="text-align:center;">
+<head>
+<style>
+  table {
+    border-spacing:30px;
+    margin: 0 0px 0 50px;
+    border-width: 1px;
+    border-color: #232323;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:100;
+    margin-bottom:50;
+  }
+   td {
+    font-family:arial;
+    padding: 8px;
+  }
+  body {
+    background-color:#f0ffec;
+  }
+  div {
+    width: 600px;
+    margin:0 auto;
+    font-family:arial;
+  }
+  h1{
+    color:#50A9CC;
+    font-size:40;
+    margin: 7 0px 0 30px;
+    font-family:arial;
+  }
+</style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        <img src="static/folder.png" alt="SLims Logo" style="margin:0 0px 0 30px width:30% "/>
+      </td>
+      <td>
+        <h1>
+          Creation of a Live Report
+        </h1>
+      </td>
+    </tr>
+  </table>
+  <div>
+    <form method="POST">
+        $:form.render()
+    </form>
+  </div>
+</body>
+</html>

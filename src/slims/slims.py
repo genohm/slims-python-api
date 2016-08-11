@@ -1,11 +1,12 @@
-from flask import Flask
-from flask import jsonify
-from flask import request as flaskrequest
-from .flowrun import FlowRun
-from werkzeug.local import Local
-import os
 import base64
+import os
+
 import requests
+from flask import request as flaskrequest
+from flask import Flask, jsonify
+from werkzeug.local import Local
+
+from .flowrun import FlowRun
 
 app = Flask(__name__)
 slims_instances = {}
@@ -15,6 +16,9 @@ local = Local()
 @app.route("/<name>/<operation>/<step>", methods=["POST"])
 def hello(name, operation, step):
     data = flaskrequest.json
+    flow_information = data['flowInformation']
+
+    print("Executing " + str(flow_information['flowId']) + " step " + step)
     local.user = data["SLIMS_CURRENT_USER"]
     return_value = slims_instances[name]._execute_operation(operation, step, data)
     if return_value:
@@ -140,13 +144,14 @@ class Slims(object):
         """
         step_dicts = []
         i = 0
+        """TODO: Change this, try returning json in slims"""
         for step in steps:
             url = flow_id + "/" + repr(i)
             step_dicts.append(step.to_dict(url))
             self.operations[url] = step
             i += 1
 
-        flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts}
+        flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
         instance = {'url': 'http://localhost:5000', 'name': self.name}
         body = {'instance': instance, 'flow': flow}
         response = self.slims_api.post("external/", body)
@@ -154,7 +159,9 @@ class Slims(object):
         if response.status_code == 200:
             print("Successfully registered " + flow_id)
         else:
-            print("Could not register " + flow_id + "(" + str(response.status_code) + ")")
+            print("Could not register " + flow_id +
+                  "(" + str(response.status_code) + "): " +
+                  response.json()["errorMessage"])
 
         if not testing:
             flask_thread()

@@ -1,11 +1,9 @@
-import unittest
 import json
-import responses
+import unittest
 
+import responses
 from slims.slims import Slims
-from slims.step import file_output
-from slims.step import text_input
-from slims.step import Step
+from slims.step import Step, file_output, text_input
 
 
 class Test_Adding_Flow(unittest.TestCase):
@@ -32,7 +30,8 @@ class Test_Adding_Flow(unittest.TestCase):
                           'process': {'route': 'myFlow/0', 'asynchronous': False},
                           'output': {'parameters': [{'type': 'FILE', 'name': 'file'}]}
                           }
-                     ]
+                     ],
+                     'pythonApiFlow': True
                      }
                  })
 

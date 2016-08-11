@@ -1,5 +1,5 @@
-import threading
 import logging
+import threading
 import traceback
 
 from .flowrun import Status
@@ -40,17 +40,24 @@ class Step(object):
                 'route': route_id,
             },
             'output': {
-               'parameters': self.output
+                'parameters': self.output
             },
         }
 
     def execute(self, flow_run):
-        if self.async:
-            logger.info("Starting to run step %s asynchronously", self.name)
-            return self._execute_async(flow_run)
-        else:
-            logger.info("Starting to run step %s synchronously", self.name)
-            return self._execute_inner(flow_run)
+        try:
+            flow_run.check_user_secret()
+            if self.async:
+                logger.info("Starting to run step %s asynchronously", self.name)
+                return self._execute_async(flow_run)
+            else:
+                logger.info("Starting to run step %s synchronously", self.name)
+                return self._execute_inner(flow_run)
+        except Exception:
+            flow_run.log(traceback.format_exc())
+            flow_run.update_status(Status.FAILED)
+            logger.info("Failed running step %s", self.name)
+            raise StepExecutionException
 
     def _execute_async(self, flow_run):
         thr = threading.Thread(target=self._execute_inner, args=[flow_run])

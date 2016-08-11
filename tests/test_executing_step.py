@@ -1,13 +1,8 @@
 import unittest
 
 from mock import MagicMock
-
-from slims.step import text_input
-from slims.step import file_output
-from slims.step import Step
-from slims.step import StepExecutionException
-from slims.flowrun import Status
-from slims.flowrun import FlowRun
+from slims.flowrun import FlowRun, Status
+from slims.step import Step, StepExecutionException, file_output, text_input
 
 
 class Test_Executing_Step(unittest.TestCase):
@@ -27,6 +22,7 @@ class Test_Executing_Step(unittest.TestCase):
 
         flow_run = FlowRun(None, None, None)
         flow_run.update_status = MagicMock()
+        flow_run.check_user_secret = MagicMock()
         flow_run.log = MagicMock()
 
         step.execute(flow_run)

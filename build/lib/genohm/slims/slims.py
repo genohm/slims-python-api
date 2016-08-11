@@ -1,11 +1,12 @@
-from flask import Flask
-from flask import jsonify
-from flask import request as flaskrequest
-from .flowrun import FlowRun
-from werkzeug.local import Local
-import os
 import base64
+import os
+
 import requests
+from flask import request as flaskrequest
+from flask import Flask, jsonify
+from werkzeug.local import Local
+
+from .flowrun import FlowRun
 
 app = Flask(__name__)
 slims_instances = {}

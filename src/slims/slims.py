@@ -14,7 +14,7 @@ local = Local()
 
 
 @app.route("/<name>/<operation>/<step>", methods=["POST"])
-def hello(name, operation, step):
+def start_step(name, operation, step):
     data = flaskrequest.json
     flow_information = data['flowInformation']
 

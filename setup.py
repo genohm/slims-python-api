@@ -10,12 +10,11 @@ from setuptools import setup, find_packages
 NAME = "slims-python-api"
 PACKAGES = find_packages(where="src")
 META_PATH = os.path.join("src", "slims", "__init__.py")
-KEYWORDS = ["class", "attribute", "boilerplate"]
+KEYWORDS = ["genohm", "slims"]
 CLASSIFIERS = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Natural Language :: English",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 2",
@@ -24,7 +23,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
-    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
 ]
 INSTALL_REQUIRES = ["flask>=0.11.1", "requests>=2.10.0", "enum34>=1.1.6"]
 

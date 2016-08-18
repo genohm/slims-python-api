@@ -105,6 +105,25 @@ class Slims(object):
                  repo_location=None,
                  local_host="localhost",
                  local_port=5000):
+
+        """
+        Creates a new slims instance to work with
+
+        Parameters:
+        name -- The name of this slims instance
+        url -- The url of the REST API of this slims instance
+        username (optional) -- The username to login with (needed for standard operations)
+        password (optional) -- The password to login with (needed for standard operations)
+        token (optional) -- The token to login with (needed to add SLimsGate flows)
+        repo_location (optional) -- The location of the file repository (this can
+            be used to access attachments without needing to download them)
+        local_host (optional) -- The IP on which this python script is running
+            Needed for SLimsGate flows. SLims will contact the python script on this
+            url. Defaults to "localhost"
+        local_port (optional) -- The port on which this python script is running
+            Needed for ports. SLims will contact the python script on this
+            ports. Defaults to "5000"
+        """
         slims_instances[name] = self
         if username is not None and password is not None:
             self.slims_api = SlimsApi(url, username, password, repo_location)
@@ -122,17 +141,17 @@ class Slims(object):
         self.local_port = local_port
 
     def fetch(self, table, criteria, sort=[], start=None, end=None):
-        """Allows to fetch data that match criterion
+        """Fetch data by criteria
+
+        The optional start and end parameters can be used to page the returned
+        results.
 
         Parameters:
-        table -- name of the table in which the fetch takes place
-        criteria -- criteria to fetch
-                    it calls criteria functions
-                    criterion can be added using one junction function followed
-                    by add(criteria) function
-        sort -- list of the fields used to sort
-        start --  number representing the position in a list of the first result to display
-        end  --  number representing the position in a list of the last result to display
+        table -- The table to fetch from
+        criteria -- The criteria to match
+        sort (optional) -- The fields to sort on
+        start (optional)--  The first row to return
+        end (optional) -- The last row to return
         """
         body = {
             "sortBy": sort,
@@ -145,6 +164,12 @@ class Slims(object):
         return self.slims_api.get_entities(table + "/advanced", body=body)
 
     def fetch_by_pk(self, table, pk):
+        """ Fetch a record by primary key
+
+        Parameters:
+        table -- The table of the record
+        pk -- The primary key of the record
+        """
         entities = self.slims_api.get_entities(table + "/" + str(pk))
         if len(entities) > 0:
             return entities[0]
@@ -152,21 +177,24 @@ class Slims(object):
             return None
 
     def add(self, table, values):
-        response = self.slims_api.put(url=table, body=values)
-        if response.status_code == 200:
-            new_values = response.json()["entities"][0]
-            return Record(new_values, self.slims_api)
-        else:
-            raise Exception(response.text)
+        """ Add a new record
+
+        Parameters:
+        table -- Table where the element need to be added.
+        values -- a dictionary with the values of the record.
+        """
+        response = self.slims_api.put(url=table, body=values).json()
+        new_values = response["entities"][0]
+        return Record(new_values, self.slims_api)
 
     def add_flow(self, flow_id, name, usage, steps, testing=False):
         """Allows to add a SLimsGate flow in SLims interface.
 
         Parameters:
-        flow_id -- name of the id of the flow_id
-        name -- name of the flow that will be displayed in SLims interface
-        usage -- name indicating in which table the flow can be called
-        steps -- a list of steps elements that needs to be executed
+        flow_id -- name of the id of the flow_id.
+        name -- name of the flow that will be displayed in SLims interface.
+        usage -- name indicating in which table the flow can be called.
+        steps -- a list of steps elements that needs to be executed.
         """
         step_dicts = []
         i = 0
@@ -233,29 +261,54 @@ class Record(object):
             self.__dict__[column.name] = column
 
     def update(self, values):
+        """
+        Updates this record with new values.
+
+        Example:
+            content = slims.fetch_by_pk("Content", 1)
+            updated_content = content.update({"cntn_id": "new_id"})
+
+        Parameters:
+        values -- dictionary with new values
+
+        returns:
+        the updated record
+        """
         url = self.table_name() + "/" + str(self.pk())
         response = self.slims_api.post(url=url, body=values).json()
         new_values = response["entities"][0]
         return Record(new_values, self.slims_api)
 
     def remove(self):
+        """
+        Removes this record.
+        """
         url = self.table_name() + "/" + str(self.pk())
         response = self.slims_api.delete(url=url)
         if response.status_code != 200:
             raise Exception("Delete failed: " + response.text)
 
     def table_name(self):
+        """
+        Returns the name of the table of this record
+        """
         return self.json_entity["tableName"]
 
     def pk(self):
+        """
+        Returns the primary key of this record
+        """
         return self.json_entity["pk"]
 
     def attachments(self):
+        """
+        Returns the attachments related to this record
+        """
         return self.slims_api.get_entities(
             "attachment/" + self.json_entity["tableName"] + "/" + str(self.json_entity["pk"]))
 
     def add_attachment(self, name, byte_array):
-        """Adds an attachment to a record (over HTTP)
+        """Adds an attachment to a record (over HTTP).
 
         Example uses:
           * content.add_attachment("test.txt", b"Hi from python")
@@ -280,9 +333,35 @@ class Record(object):
         return int(location[location.rfind("/") + 1:])
 
     def column(self, column_name):
+        """
+        Returns a column of the record
+
+        Parameters:
+        column_name -- name of the column.
+        """
         return self.__dict__[column_name]
 
     def follow(self, link_name):
+        """
+        Follows an incoming or outgoing foreign key
+
+        Examples:
+            - content_type = slims.fetch_by_pk("Content", 1L)
+                    .follow("cntn_fk_contentType")
+            This fetches the content record with primary key 1 and then fetches
+            its content type (one record).
+
+            - results = slims.fetch_by_pk("Content", 1L)
+                    .follow("-rslt_fk_content")
+
+            This fetches the content record with primary key 1 and then fetches
+            its results (a list of records)
+
+
+        Parameters:
+        link_name -- field linking two tables.
+            The links should start with a - (minus) if the link is incoming.
+        """
         for link in self.json_entity["links"]:
             if link["rel"] == link_name:
                 href = link["href"]
@@ -303,13 +382,17 @@ class Attachment(Record):
         super(Attachment, self).__init__(json_entity, slims_api)
 
     def get_local_path(self):
+        """
+        Returns the location of an attachment on disk
+        """
         if self.slims_api.repo_location:
             return os.path.join(self.slims_api.repo_location, self.attm_path.value)
         else:
             raise RuntimeError("no repo_location configured")
 
     def download_to(self, location):
-        """Downloads an attachment to a location on disk
+        """
+        Downloads an attachment to a file on disk
 
         Example uses:
           * attachment.download_to("test.txt")

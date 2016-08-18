@@ -11,6 +11,7 @@ class JunctionType(Enum):
 class Criterion(object):
 
     def to_dict(self):
+        """ Serializes criterion to dictionary """
         raise NotImplementedError
 
 
@@ -37,6 +38,7 @@ class Junction(Criterion):
         self.members = []
 
     def add(self, member):
+        """ Adds a member to this junction """
         self.members.append(member)
         return self
 
@@ -51,216 +53,226 @@ class Junction(Criterion):
 
 
 def equals(field, value):
-    """Allows to select elements regarding a field that equal a certain value.
+    """Applies an "equals" constraint to the specified field
 
-    It differentiates the capital from non-capital letters.
+    - Example: slims.fetch("Content", equals("cntn_id", "dna0001"))
+        This will fetch all the content records that have "dna0001" as their id
+
+    This is case-sensitive depending on the used database.
+
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value to which the field needs to be equal
-
-    Returns: the elements with the field equal to a specific value
+    field -- the field to match
+    value -- the value to match
     """
     return Expression(_criterion(field, "equals", value))
 
 
 def equals_ignore_case(field, value):
-    """Allows to select elements regarding a field that equal a certain value.
+    """Applies an "equals" constraint to the specified field
 
-    It does not differentiate the capital from non-capital letters.
+    - Example: slims.fetch("Content", equals_ignore_case("cntn_id", "dna0001"))
+        This will fetch all the content records that have "dna0001" as their id
+
+    This is always case-insensitive.
+
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value to which the field needs to be equal
-
-    Returns: the elements with the field equal to a specific value
+    field -- the field to match
+    value -- the value to match
     """
     return Expression(_criterion(field, "iEquals", value))
 
 
 # Could be done by using the equals function and the NOT junction
 def not_equals(field, value):
-    """Allows to select elements regarding a field that does not equal a value.
+    """Applies an "not equals" constraint to the specified field
 
-    It does not differentiate the capital from non-capital letters.
+    - Example: slims.fetch("Content", not_equals("cntn_id", "dna0001"))
+        This will fetch all the content records that do not have "dna0001" as their id
+
+    This is case-sensitive depending on the used database.
+
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value to which the field must not be equal
-
-    Returns: the elements with the field not equal to a specific value
+    field -- the field to match
+    value -- the value not to match
     """
     return Expression(_criterion(field, "iNotEqual", value))
 
 
 def is_null(field):
-    """Allows to select elements regarding a field that equal NULL.
+    """Applies an "is null" constraint to the specified field
+
+    - Example: slims.fetch("Content", is_null("cntn_fk_location"))
+        This will fetch all the content records that are not in a location
 
     Parameters:
-    field -- the field that need to be evaluated
-
-    Returns: the elements with the field equal to NULL
+    field -- the field to match
     """
     return Expression(_criterion(field, "isNull", None))
 
 
 # Could be done by using the isNull function and the NOT junction
 def is_not_null(field):
-    """Allows to select elements regarding a field that does not equal NULL.
+    """Applies an "is not null" constraint to the specified field
+
+    - Example: slims.fetch("Content", is_not_null("cntn_fk_location"))
+        This will fetch all the content records that are in a location
 
     Parameters:
-    field -- the field that need to be evaluated
-
-    Returns: the elements with the field not equal to NULL
+    field -- the field to match
     """
     return Expression(_criterion(field, "notNull", None))
 
 
 def starts_with(field, value):
-    """Allows to select elements regarding a field that starts with certain value.
+    """Applies a "starts with" constraint to the specified field
+
+    - Example: slims.fetch("Content", start_with("cntn_id", "dna"))
+        This will fetch all the content records that have an id that starts with "dna"
 
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value with which the field needs to start
-
-    Returns: the elements with the field starting with the value
+    field -- the field to match
+    value -- the value to start with
     """
     return Expression(_criterion(field, "iStartsWith", value))
 
 
 def ends_with(field, value):
-    """Allows to select elements regarding a field that ends with certain value.
+    """Applies an "ends with" constraint to the specified field
+
+    - Example: slims.fetch("Content", ends_with("cntn_id", "001"))
+        This will fetch all the content records that have an id that ends with "001"
 
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value with which the field needs to end
-
-    Returns: the elements with the field ending with the value
+    field -- the field to match
+    value -- the value to end with
     """
     return Expression(_criterion(field, "iEndsWith", value))
 
 
 def contains(field, value):
-    """Allows to select elements regarding a field that contains a certain value.
+    """Applies a "contains" constraint to the specified field
+
+    - Example: slims.fetch("Content", contains("cntn_id", "test"))
+        This will fetch all the content records that have an id that contains "test"
 
     Parameters:
-    field -- the field that need to be evaluated
-    value -- the value that need to be contained by the field
-
-    Returns: the elements with the field containing the value
+    field -- the field to match
+    value -- the value to contain
     """
     return Expression(_criterion(field, "iContains", value))
 
 
 # For now, not defined in SLims
 def between_inclusive(field, start, end):
-    return Expression(_criterionBetween(field, "betweenInclusive", start, end))
+    """Applies a "between" constraint to the specified field
 
+    - Example: slims.fetch("Content", between_inclusive("cntn_barCode", "00001", "00010"))
+        This will fetch all the content records that have a barcode between 00001 and 00010
 
-def between_inclusive_match_case(field, start, end):
-    """Allows to select elements regarding a field that is betweem two values.
-
-    It differentiates the capital from non-capital letters.
     Parameters:
-    field -- the field that need to be evaluated
-    start -- the lower value of the bound
-    end -- the upper value of the bound
-
-    Returns: the elements with the field comprise in between the two values
+    field -- the field to match
+    start -- the value to start with (inclusive)
+    start -- the value to end with (inclusive)
     """
     return Expression(_criterionBetween(field, "betweenInclusive", start, end))
 
 
 def is_one_of(field, value):
-    """Allows to select a specific set of elements based on the field.
+    """Applies an "is one of" constraint to the specified field
+
+    - Example: slims.fetch("Content", is_one_of("cntn_barCode", ["0001", "0002", "0004"]))
+        This will fetch all the content records that have a barcode that is either
+        0001, 0002 or 0004.
 
     Parameters:
-    field -- the field that need to be checked
-    value -- the set ([]) of value that needs to be selected
-
-    Returns: the elements that coincide with the given value(s)
+    field -- the field to match
+    value -- the list of values to match
     """
     return Expression(_criterion(field, "inSet", value))
 
 
 # Could be done by using the isOneOf function and the NOT junction
 def is_not_one_of(field, value):
-    """Allows to exclue elements from the final set based on the field.
+    """Applies an "is not one of" constraint to the specified field
+
+    - Example: slims.fetch("Content", is_not_one_of("cntn_barCode", ["0001", "0002", "0004"]))
+        This will fetch all the content records that have a barcode that is not
+        0001, 0002 or 0004.
 
     Parameters:
-    field -- the field that need to be checked
-    value -- the set ([]) of value that needs to be exclued
-
-    Returns: the elements that are not given as value
+    field -- the field to match
+    value -- the list of values not to match
     """
     return Expression(_criterion(field, "notInSet", value))
 
 
 def less_than(field, value):
-    """Allows to select elements with a field less than a value.
-    Parameters:
-    field -- the field that needs to be less than
-    value -- the value that serves as limit
+    """Applies a "less than" constraint to the specified field
 
-    Returns: the elements having the field less than a value
+    - Example: slims.fetch("Content", less_than("cntn_quantity", "5"))
+        This will fetch all the content records that have a quantity smaller than 5
+
+    Parameters:
+    field -- the field to match
+    value -- the value to start with
     """
     return Expression(_criterion(field, "lessThan", value))
 
 
 def greater_than(field, value):
-    """Allows to select elements with a field greater than a value.
+    """Applies a "greater than" constraint to the specified field
+
+    - Example: slims.fetch("Content", greater_than("cntn_quantity", "5"))
+        This will fetch all the content records that have a quantity greater than 5
 
     Parameters:
-    field -- the field that needs to be greater than
-    value -- the value that serves as limit
-
-    Returns: the elements having the field greater than a value
+    field -- the field to match
+    value -- the value to start with
     """
     return Expression(_criterion(field, "greaterThan", value))
 
 
 def less_than_or_equal(field, value):
-    """Allows to select elements with a field less than or equal to a value.
-    Parameters:
-    field -- the field that needs to be less than or equal
-    value -- the value that serves as limit
+    """Applies a "less than or equal" constraint to the specified field
 
-    Returns: the elements having the field less than or equal to a value
+    - Example: slims.fetch("Content", less_than_or_equal("cntn_quantity", "5"))
+        This will fetch all the content records that have a quantity less than or equal to 5
+
+    Parameters:
+    field -- the field to match
+    value -- the value to start with
     """
     return Expression(_criterion(field, "lessOrEqual", value))
 
 
 def greater_than_or_equal(field, value):
-    """Allows to select elements with a field greater than or equal to a value.
+    """Applies a "greater than or equal" constraint to the specified field
+
+    - Example: slims.fetch("Content", greater_than_or_equal("cntn_quantity", "5"))
+        This will fetch all the content records that have a quantity greater than or equal to 5
 
     Parameters:
-    field -- the field that needs to be greater than or equal
-    value -- the value that serves as limit
-
-    Returns: the elements having the field greater than or equal to a value
+    field -- the field to match
+    value -- the value to start with
     """
     return Expression(_criterion(field, "greaterOrEqual", value))
 
 
 def is_na(field):
-    """Allows to select the elements having a field with a NA.
+    """Applies a "is not applicable" constraint to the specified field (this is an
+    option on custom fields)
 
-    Parameter:
-    field -- the field that can take NA as value
+    - Example: slims.fetch("Content", is_na("cntn_cf_numberOfSigarettes"))
+        This will fetch all the content records for which the number of sigarrettes
+        is not applible (for example for non smokers)
 
-    Returns: the elements having a field with a NA
+    Parameters:
+    field -- the field to match
     """
     return Expression(_criterion("isNaFilter", "equals", field))
 
 
 def _criterion(field, operator, value=None):
-    """Defines the necessary information for the functions of operators.
-
-    Parameters:
-    field -- the field on which the operator needs to be applied
-    operator -- the operator displayed in the SmartClient Developer Console
-    value -- the value demanded by the operator
-             default value is None but can also be multiple (list)
-
-    Returns: the necessary information for the function of operator
-    """
     return_value = {
         "fieldName": field,
         "operator": operator
@@ -271,16 +283,6 @@ def _criterion(field, operator, value=None):
 
 
 def _criterionBetween(field, operator, start, end):
-    """Defines the necessary information for the functions of between operators.
-
-    Parameters:
-    field -- the field on which the operator needs to be applied
-    operator -- the operator displayed in the SmartClient Developer Console
-    start -- the lowest value demanded by the operator between
-    end -- the highest value demanded by the operator between
-
-    Retruns: the necessary information for the function of operator
-    """
     return_value = {
         "fieldName": field,
         "operator": operator,
@@ -291,19 +293,37 @@ def _criterionBetween(field, operator, start, end):
 
 
 def conjunction():
-    """Allows to informatio operations in a additive way (and)."""
+    """Combines multiple criteria in a conjunctive way (and)
+
+    - Example: slims.fetch("Content", conjunction()
+                .add(start_with("cntn_id", "DNA"))
+                .add(greater_than("cntn_quantity", 5)
+
+        This will fetch all the content records for which their id starts with
+        "DNA" and their quantity is bigger than 5.
+    """
     return Junction(JunctionType.AND)
 
 
 def disjunction():
-    """Allows to join operations with alternatives (or)."""
+    """Combines multiple criteria in a conjunctive way (or)
+
+    - Example: slims.fetch("Content", disjunction()
+                .add(start_with("cntn_id", "DNA"))
+                .add(greater_than("cntn_quantity", 5)
+
+        This will fetch all the content records for which their id starts with
+        "DNA" or their quantity is bigger than 5.
+    """
     return Junction(JunctionType.OR)
 
 
 def is_not(criterion):
-    """Allows to join operations in a substractive way (not).
+    """Inverts a criterion
 
-    Paramters:
-    criterion -- the wanted criteria used in the substractive operator
+    - Example: slims.fetch("Content", is_not(start_with("cntn_id", "DNA")))
+
+        This will fetch all the content records for which their id does not starts
+        with "DNA"
     """
     return Junction(JunctionType.NOT).add(criterion)

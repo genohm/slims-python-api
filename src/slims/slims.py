@@ -119,11 +119,13 @@ class Slims(object):
         end  --  number representing the position in a list of the last result to display
         """
         body = {
-            "criteria": criteria.to_dict(),
             "sortBy": sort,
             "startRow": start,
             "endRow": end,
         }
+        if criteria:
+            body["criteria"] = criteria.to_dict()
+
         return self.slims_api.get_entities(table + "/advanced", body=body)
 
     def fetch_by_pk(self, table, pk):

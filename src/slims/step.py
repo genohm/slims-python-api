@@ -183,7 +183,7 @@ def single_choice_with_value_map_input(name, label, table=None, filtered=None,
     """
 
     return _choice_with_value_map_input(
-        name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_customer_field, *kwargs)
+        name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_customer_field, **kwargs)
 
 
 def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,

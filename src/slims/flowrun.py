@@ -1,4 +1,7 @@
+import logging
 from enum import Enum
+
+logger = logging.getLogger('genohm.slims.flowrun')
 
 
 class Status(Enum):
@@ -14,6 +17,7 @@ class FlowRun(object):
         self.data = data
 
     def log(self, message):
+        logger.info(message)
         body = {
             'index': self.index,
             'flowRunGuid': self.data["flowInformation"]["flowRunGuid"],
@@ -22,6 +26,7 @@ class FlowRun(object):
         self.slims_api.post("external/log", body)
 
     def update_status(self, status):
+        logger.info("Updating flowrun to status " + status.name)
         body = {
             'index': self.index,
             'flowRunGuid': self.data["flowInformation"]["flowRunGuid"],
@@ -38,5 +43,5 @@ class FlowRun(object):
         }
         response = self.slims_api.post("external/userSecretCheck", body)
         if response.status_code != 200:
-            print(response.json()["errorMessage"])
+            logger.info("User secret check failed: " + response.json()["errorMessage"])
             raise Exception("Forbidden access")

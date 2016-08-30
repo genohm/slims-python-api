@@ -20,7 +20,7 @@ class Test_Executing_Step(unittest.TestCase):
                         file_output()
                     ])
 
-        flow_run = FlowRun(None, None, None)
+        flow_run = FlowRun(None, None, {})
         flow_run.update_status = MagicMock()
         flow_run.check_user_secret = MagicMock()
         flow_run.log = MagicMock()

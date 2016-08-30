@@ -1,6 +1,6 @@
 import base64
 import os
-
+import logging
 import requests
 from flask import request as flaskrequest
 from flask import Flask, jsonify
@@ -11,6 +11,12 @@ from .flowrun import FlowRun
 app = Flask(__name__)
 slims_instances = {}
 local = Local()
+logger = logging.getLogger('genohm.slims.slims')
+logging.basicConfig(level=logging.INFO)
+
+
+def slims_local():
+    return local
 
 
 @app.route("/<name>/<operation>/<step>", methods=["POST"])
@@ -18,8 +24,7 @@ def start_step(name, operation, step):
     data = flaskrequest.json
     flow_information = data['flowInformation']
 
-    print("Executing " + str(flow_information['flowId']) + " step " + step)
-    local.user = data["SLIMS_CURRENT_USER"]
+    logger.info("Executing " + str(flow_information['flowId']) + " step " + step)
     return_value = slims_instances[name]._execute_operation(operation, step, data)
     if return_value:
         return jsonify(**return_value)
@@ -144,7 +149,6 @@ class Slims(object):
         """
         step_dicts = []
         i = 0
-        """TODO: Change this, try returning json in slims"""
         for step in steps:
             url = flow_id + "/" + repr(i)
             step_dicts.append(step.to_dict(url))
@@ -157,11 +161,15 @@ class Slims(object):
         response = self.slims_api.post("external/", body)
 
         if response.status_code == 200:
-            print("Successfully registered " + flow_id)
+            logger.info("Successfully registered " + flow_id)
         else:
-            print("Could not register " + flow_id +
-                  "(" + str(response.status_code) + "): " +
-                  response.json()["errorMessage"])
+            logger.info("Could not register " + flow_id +
+                        " (HTTP Response code: " + str(response.status_code) + ")")
+            try:
+                logger.info("Reason: " + response.json()["errorMessage"])
+            except Exception:
+                # Probably no json was sent
+                pass
 
         if not testing:
             flask_thread()

@@ -25,19 +25,19 @@ requestables = slims.fetch("Requestable", is_not(equals("rqbl_type", "WORKFLOW")
 
 dic_order_type = {}
 for order_type in order_types:
-    dic_order_type.update({order_type.column("rdtp_name").value: order_type})
+    dic_order_type.update({order_type.rdtp_name.value: order_type})
 
 dic_content_type = {}
 for content_type in content_types:
-    dic_content_type.update({content_type.column("cntp_name").value: content_type})
+    dic_content_type.update({content_type.cntp_name.value: content_type})
 
 dic_location = {}
 for location in locations:
-    dic_location.update({location.column("lctn_name").value: location})
+    dic_location.update({location.lctn_name.value: location})
 
 dic_requestable = {}
 for requestable in requestables:
-    dic_requestable.update({requestable.column("rqbl_name").value: requestable})
+    dic_requestable.update({requestable.rqbl_name.value: requestable})
 
 
 # Web page inputs

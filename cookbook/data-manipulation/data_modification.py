@@ -83,11 +83,9 @@ created_result = slims.add("Result",
                                 'amount': 0.02,
                                 'unit_display': weight_test[0].follow("test_fk_resultTablefield")
                                                               .follow("tbfl_fk_unit")
-                                                              .column("unit_abbreviation")
-                                                              .value,
+                                                              .unit_abbreviation.value,
                                 'unit_pk': weight_test[0].follow("test_fk_resultTablefield")
-                                                         .column("tbfl_fk_unit")
-                                                         .value
+                                                         .tbfl_fk_unit.value
                             }})
 
 print ("A result of value", created_result.rslt_value.value, created_result.rslt_value.unit,
@@ -105,11 +103,9 @@ modified_result = created_result.update({'rslt_value': {
                                          'amount': 0.5,
                                          'unit_display': weight_test[0].follow("test_fk_resultTablefield")
                                                                        .follow("tbfl_fk_unit")
-                                                                       .column("unit_abbreviation")
-                                                                       .value,
+                                                                       .unit_abbreviation.value,
                                          'unit_pk': weight_test[0].follow("test_fk_resultTablefield")
-                                                                  .column("tbfl_fk_unit")
-                                                                  .value
+                                                                  .tbfl_fk_unit.value
                                          }})
 print ("Result linked to content", created_fish.cntn_id.value,
        "has been modified to", modified_result.rslt_value.value, modified_result.rslt_value.unit, "\n\n")

@@ -2,6 +2,9 @@ import base64
 import os
 import logging
 import requests
+import sched
+import time
+import threading
 from flask import request as flaskrequest
 from flask import Flask, jsonify
 from werkzeug.local import Local
@@ -104,6 +107,9 @@ class Slims(object):
 
         self.name = name
         self.operations = {}
+        self.flow_definitions = []
+        self.refresh_flows_thread = threading.Thread(target=self._refresh_flows_thread_inner)
+        self.refresh_flows_thread.daemon = True
 
     def fetch(self, table, criteria, sort=[], start=None, end=None):
         """Allows to fetch data that match criterion
@@ -161,28 +167,49 @@ class Slims(object):
             i += 1
 
         flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
-        instance = {'url': 'http://localhost:5000', 'name': self.name}
-        body = {'instance': instance, 'flow': flow}
-        response = self.slims_api.post("external/", body)
-
-        if response.status_code == 200:
-            logger.info("Successfully registered " + flow_id)
-        else:
-            logger.info("Could not register " + flow_id +
-                        " (HTTP Response code: " + str(response.status_code) + ")")
-            try:
-                logger.info("Reason: " + response.json()["errorMessage"])
-            except Exception:
-                # Probably no json was sent
-                pass
+        self.flow_definitions.append(flow)
+        self._register_flows([flow], False)
 
         if not testing:
+            if not self.refresh_flows_thread.is_alive():
+                self.refresh_flows_thread.start()
             flask_thread()
+
+    def _register_flows(self, flows, is_reregister):
+        flow_ids = map(lambda flow: flow.get('id'), flows)
+        verb = "re-register" if is_reregister else "register"
+
+        try:
+            instance = {'url': 'http://localhost:5000', 'name': self.name}
+            body = {'instance': instance, 'flows': flows}
+            response = self.slims_api.post("external/", body)
+
+            if response.status_code == 200:
+                logger.info("Successfully " + verb + "ed " + str(flow_ids))
+            else:
+                logger.info("Could not " + verb + " " + str(flow_ids) +
+                            " (HTTP Response code: " + str(response.status_code) + ")")
+                try:
+                    logger.info("Reason: " + response.json()["errorMessage"])
+                except Exception:
+                    # Probably no json was sent
+                    pass
+        except Exception:
+            logger.info("Could not " + verb + " flows " + str(flow_ids) + " trying again in 60 seconds")
 
     def _execute_operation(self, operation, step, data):
         flow_run = FlowRun(self.slims_api, step, data)
         output = self.operations[operation + "/" + str(step)].execute(flow_run)
         return output
+
+    def _refresh_flows_thread_inner(self):
+        def refresh_flows(scheduler):
+            self._register_flows(self.flow_definitions, True)
+            scheduler.enter(60, 1, refresh_flows, (scheduler,))
+
+        scheduler = sched.scheduler(time.time, time.sleep)
+        scheduler.enter(60, 1, refresh_flows, (scheduler,))
+        scheduler.run()
 
 
 class Record(object):

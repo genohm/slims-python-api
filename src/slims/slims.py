@@ -35,8 +35,8 @@ def start_step(name, operation, step):
         return jsonify(**{})
 
 
-def flask_thread():
-    app.run()
+def flask_thread(port):
+    app.run(port=port)
 
 
 class SlimsApiException(Exception):
@@ -96,7 +96,15 @@ class SlimsApi(object):
 
 class Slims(object):
 
-    def __init__(self, name, url, username=None, password=None, token=None, repo_location=None):
+    def __init__(self,
+                 name,
+                 url,
+                 username=None,
+                 password=None,
+                 token=None,
+                 repo_location=None,
+                 local_host="localhost",
+                 local_port=5000):
         slims_instances[name] = self
         if username is not None and password is not None:
             self.slims_api = SlimsApi(url, username, password, repo_location)
@@ -110,6 +118,8 @@ class Slims(object):
         self.flow_definitions = []
         self.refresh_flows_thread = threading.Thread(target=self._refresh_flows_thread_inner)
         self.refresh_flows_thread.daemon = True
+        self.local_host = local_host
+        self.local_port = local_port
 
     def fetch(self, table, criteria, sort=[], start=None, end=None):
         """Allows to fetch data that match criterion
@@ -173,14 +183,14 @@ class Slims(object):
         if not testing:
             if not self.refresh_flows_thread.is_alive():
                 self.refresh_flows_thread.start()
-            flask_thread()
+            flask_thread(self.local_port)
 
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)
         verb = "re-register" if is_reregister else "register"
 
         try:
-            instance = {'url': 'http://localhost:5000', 'name': self.name}
+            instance = {'url': "http://" + self.local_host + ':' + str(self.local_port), 'name': self.name}
             body = {'instance': instance, 'flows': flows}
             response = self.slims_api.post("external/", body)
 

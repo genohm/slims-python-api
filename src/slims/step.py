@@ -3,7 +3,7 @@ import threading
 import traceback
 
 from .flowrun import Status
-from .slims import slims_local
+from .slims import _slims_local
 
 logger = logging.getLogger('genohm.slims.step')
 
@@ -55,7 +55,7 @@ class Step(object):
                 return self._execute_inner(flow_run)
         except Exception:
             flow_run.log(traceback.format_exc())
-            flow_run.update_status(Status.FAILED)
+            flow_run._update_status(Status.FAILED)
             logger.info("Failed running step %s", self.name)
             raise StepExecutionException
 
@@ -66,15 +66,15 @@ class Step(object):
     def _execute_inner(self, flow_run):
         try:
             if flow_run.data.get("SLIMS_CURRENT_USER") is not None:
-                slims_local().user = flow_run.data["SLIMS_CURRENT_USER"]
-            flow_run.check_user_secret()
+                _slims_local().user = flow_run.data["SLIMS_CURRENT_USER"]
+            flow_run._check_user_secret()
             value = self.action(flow_run)
-            flow_run.update_status(Status.DONE)
+            flow_run._update_status(Status.DONE)
             logger.info("Done running step %s", self.name)
             return value
         except Exception:
             flow_run.log(traceback.format_exc())
-            flow_run.update_status(Status.FAILED)
+            flow_run._update_status(Status.FAILED)
             logger.info("Failed running step %s", self.name)
             logger.info(traceback.format_exc())
             raise StepExecutionException

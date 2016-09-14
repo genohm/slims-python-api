@@ -5,6 +5,7 @@ logger = logging.getLogger('genohm.slims.flowrun')
 
 
 class Status(Enum):
+    """ Status of a flow run step """
     DONE = 1
     FAILED = 2
 
@@ -20,8 +21,12 @@ class FlowRun(object):
         """
         Logs a message to Slims
 
-        Parameters:
-        message: the message to log
+        Args:
+            message (string): the message to log
+
+        Example:
+            >>> def step_action(flow_run):
+                    flow_run.log("Hello from python")
         """
         logger.info(message)
         body = {
@@ -31,14 +36,7 @@ class FlowRun(object):
         }
         self.slims_api.post("external/log", body)
 
-    def update_status(self, status):
-        """
-        Updates the status of the step in slims. Typically not needed to update
-        manually
-
-        Parameters:
-        status: the new status of the step
-        """
+    def _update_status(self, status):
         logger.info("Updating flowrun to status " + status.name)
         body = {
             'index': self.index,
@@ -47,10 +45,7 @@ class FlowRun(object):
         }
         self.slims_api.post("external/status", body)
 
-    def check_user_secret(self):
-        """
-        Checks if the step was started with the correct secret.
-        """
+    def _check_user_secret(self):
         body = {
             'index': self.index,
             'flowRunGuid': self.data["flowInformation"]["flowRunGuid"],

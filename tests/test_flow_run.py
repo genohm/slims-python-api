@@ -47,4 +47,4 @@ class Test_Flow_Run(unittest.TestCase):
         flowrun = FlowRun(slims.slims_api, 0, {
             "flowInformation": {"flowRunGuid": "guid"}
         })
-        flowrun.update_status(Status.FAILED)
+        flowrun._update_status(Status.FAILED)

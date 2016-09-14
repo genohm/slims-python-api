@@ -21,13 +21,13 @@ class Test_Executing_Step(unittest.TestCase):
                     ])
 
         flow_run = FlowRun(None, None, {})
-        flow_run.update_status = MagicMock()
-        flow_run.check_user_secret = MagicMock()
+        flow_run._update_status = MagicMock()
+        flow_run._check_user_secret = MagicMock()
         flow_run.log = MagicMock()
 
         step.execute(flow_run)
 
-        flow_run.update_status.assert_called_with(Status.DONE)
+        flow_run._update_status.assert_called_with(Status.DONE)
 
     def test_fail(self):
         def execute_first_step(flow_run):
@@ -43,9 +43,9 @@ class Test_Executing_Step(unittest.TestCase):
                     ])
 
         flow_run = FlowRun(None, None, None)
-        flow_run.update_status = MagicMock()
+        flow_run._update_status = MagicMock()
         flow_run.log = MagicMock()
 
         self.assertRaises(StepExecutionException, step.execute, flow_run)
 
-        flow_run.update_status.assert_called_with(Status.FAILED)
+        flow_run._update_status.assert_called_with(Status.FAILED)

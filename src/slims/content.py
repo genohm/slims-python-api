@@ -2,6 +2,15 @@ from enum import Enum
 
 
 class Status(Enum):
+    """List of content statusses in SLims
+
+    Can be used to fetch or update content
+
+    Examples:
+        >>> slims.fetch("Content",
+                equals("cntn_status", Status.PENDING.value))
+    """
+
     PENDING = 10
     AVAILABLE = 20
     LABELED = 30

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # slims-python-api documentation build configuration file, created by
-# sphinx-quickstart on Tue Jul 26 15:34:58 2016.
+# sphinx-quickstart on Wed Sep 14 10:56:57 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -16,9 +16,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../src'))
 
 # -- General configuration ------------------------------------------------
 
@@ -29,7 +29,10 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -80,7 +83,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'genohm/tests/*']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -284,12 +287,6 @@ latex_documents = [
 # Documents to append as an appendix to all manuals.
 #
 # latex_appendices = []
-
-# It false, will not define \strong, \code, 	itleref, \crossref ... but only
-# \sphinxstrong, ..., \sphinxtitleref, ... To help avoid clash with user added
-# packages.
-#
-# latex_keep_old_macro_names = True
 
 # If false, no module index is generated.
 #

@@ -4,13 +4,14 @@ slims package
 Submodules
 ----------
 
-slims.content module
---------------------
+slims.slims module
+------------------
 
-.. automodule:: slims.content
+.. automodule:: slims.slims
     :members:
     :undoc-members:
     :show-inheritance:
+
 
 slims.criteria module
 ---------------------
@@ -19,6 +20,7 @@ slims.criteria module
     :members:
     :undoc-members:
     :show-inheritance:
+
 
 slims.flowrun module
 --------------------
@@ -36,13 +38,7 @@ slims.output module
     :undoc-members:
     :show-inheritance:
 
-slims.slims module
-------------------
 
-.. automodule:: slims.slims
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 slims.step module
 -----------------
@@ -61,10 +57,10 @@ slims.util module
     :show-inheritance:
 
 
-Module contents
----------------
+slims.content module
+--------------------
 
-.. automodule:: slims
+.. automodule:: slims.content
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,1 +1,0 @@
-find . -name '*.py' | xargs pep8 --max-line-length=120

@@ -19,7 +19,7 @@ from slims.criteria import disjunction
 from slims.criteria import is_not
 from slims.util import display_results
 
-slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/Users/Ruben/RepoRepo/deplancke38")
+slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 
 
 # EXAMPLE OF OPERATOR COMBINATIONS

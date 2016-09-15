@@ -238,7 +238,7 @@ class Slims(object):
             flow_id (string): Technical identificator of the flow
             name(string): Displayed name of the the flow
             usage(string): Usage of the slimsgate flow
-            steps: (list step): The steps of the slimsgate flow
+            steps(list step): The steps of the slimsgate flow
 
         Examples:
             >>> def hello_world(flow_run):

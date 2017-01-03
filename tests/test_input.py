@@ -53,7 +53,7 @@ class Test_Slimsgate_Input(unittest.TestCase):
             table="Content",
             reference="reference",
             filtered="filter",
-            fixed_choice_customer_field="cntn_cf_test")
+            fixed_choice_custom_field="cntn_cf_test")
 
         expected = {"name": "choice", "label": "Choice", "type": "SINGLE_CHOICE",
                     "valueMap": {

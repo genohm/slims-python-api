@@ -1,11 +1,15 @@
 """ In this example, results are fetched from slims and plotted
 
-    For the example to work, contents of type "Patient" with results filled of test type "length Test"
-    and "weight test" (labels) are necessary.
+    Contents of type "Patient" and results associated to them for tests
+    "length Test" and "weight test" (labels). A patient HAS TO HAVE one
+    and only one result for each test.
 
     A BMI Calculation is done based on both.
 
     The plotting requires matplotlib (pip install matplotlib)
+
+    run this script using the underneath command in the folder plotting
+    python main.py
 """
 from __future__ import division
 from slims.slims import Slims
@@ -14,7 +18,7 @@ import matplotlib.pyplot as plt
 
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 
-# Data fetch -> selection of all results
+# Data fetch -> selection of patients and their results
 patients = slims.fetch("Content", equals("cntp_name", "Patient"))
 patient_pks = map(lambda patient: patient.pk(), patients)
 
@@ -25,19 +29,19 @@ weights = []
 BMI = []
 x_axis_values = []
 
-# With the results, length and weight of the patients are found
+# Identification of the result per test
 print ("Fetching necessary data...")
 for result in results:
-    # In the condition, the label of the test is required (here: length Test)
+    # first identification the length Test results
     if result.rslt_fk_test.displayValue in "length Test":
         lengths.append(result.rslt_value.value)
         # Storage of content ID to display them on x axis
         x_axis_values.append(result.rslt_fk_content.displayValue)
-    # In the condition, the label of the test is required (here: weight test)
+    # first identification the weight Test results
     if result.rslt_fk_test.displayValue in "weight test":
         weights.append(result.rslt_value.value)
 
-# Calculation and creation of the new result BMI
+# Calculation and creation of the new BMI result
 print ("Calculating BMI")
 for i in range(len(weights)):
     BMI.append(weights[i]/(lengths[i]*lengths[i]))

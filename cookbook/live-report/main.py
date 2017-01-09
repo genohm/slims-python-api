@@ -1,5 +1,12 @@
-"""This web application is displaying on a web page a live report for a selected period.
+"""This web application is displaying on a web page a live report for a selected
+   period.
    This script requires dateutils and web.py (pip install web.py dateutils)
+   #be careful, web.py does not work with python 3.x
+
+   Launch the script from within the live-report folder with the command
+   python main.py 7777
+   this way the report can be accessed on http://0.0.0.0:7777 (as shown on the
+   terminal)
 """
 
 import datetime
@@ -10,10 +17,11 @@ from slims.slims import Slims
 from slims.criteria import between_inclusive
 
 render = web.template.render('templates/')
-slims = Slims("slims", "http://localhost:9999", "admin", "admin")
+slims = Slims("slims", "http://slimstest.genohm.com/coming", "admin", "admin")
 
-# Creation of the register from which will allow the user to choose a period of time
-period = [('days', 'one day'), ('weeks', 'one week'), ('months', 'one month'), ('years', 'one year')]
+# Creation of the register form which allows the user to choose a period of time
+period = [('days', 'one day'), ('weeks', 'one week'), ('months', 'one month'),
+          ('years', 'one year')]
 
 register_form = form.Form(
     form.Radio("Period", period, description="Number of Time to Display"),
@@ -55,25 +63,31 @@ class DisplayReport:
             period = f.d.Period
             previous_date = calculate_previous_date(now, period)
 
-            # Searching for the results in the selected period of time
+            # Searching for results in the selected period of time
             records = slims.fetch("Result",
-                                  between_inclusive("rslt_createdOn", previous_date, now),
+                                  between_inclusive("rslt_createdOn",
+                                                    previous_date, now),
                                   sort=["rslt_fk_test", "rslt_fk_content"])
 
             table = []
             for record in records:
-                # For each record we create a row in the table
+                # For each record a row in the table is created
                 row = []
-                row.append(get_attribute_of_column(record, "rslt_fk_content", "displayValue"))
-                row.append(get_attribute_of_column(record, "rslt_fk_test", "displayValue"))
-                row.append(get_attribute_of_column(record, "rslt_value", "value"))
-                row.append(get_attribute_of_column(record, "rslt_value", "unit"))
+                row.append(get_attribute_of_column(record, "rslt_fk_content",
+                                                   "displayValue"))
+                row.append(get_attribute_of_column(record, "rslt_fk_test",
+                                                   "displayValue"))
+                row.append(get_attribute_of_column(record, "rslt_value",
+                                                   "value"))
+                row.append(get_attribute_of_column(record, "rslt_value",
+                                                   "unit"))
 
-                # ExperimentRun
+                # ExperimentRunStep
                 if record.rslt_fk_experimentRunStep.value is None:
                     row.append(" - ")
                 else:
-                    # ExperimentRun (first fetch the experimentrunstep, then get its name)
+                    # ExperimentRunStep (first fetch the experimentrunstep,
+                    # then get its name)
                     experimentRunStep = record.follow("rslt_fk_experimentRunStep")
                     row.append(experimentRunStep.xprs_fk_experimentRun.displayValue)
 

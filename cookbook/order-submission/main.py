@@ -1,8 +1,13 @@
-""" In this sample web application, a user can create a content record and an
-    order and request one requestable.
+""" In this sample web application, a user can create a content record,  an
+    order and select one requet
 
     This is written using web.py (pip install web.py) and demonstrates
-    some fetching and inserting of data via the REST api.
+    some fetching and inserting of data via the REST api. #be careful, web.py
+    does not work with python 3.x
+
+    Launch the script from within the order-submission folder with the command
+    python main.py 7777
+    this way the report can be accessed on http://localhost:7777
 """
 from __future__ import print_function
 import web
@@ -17,7 +22,7 @@ render = web.template.render('templates/')
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 
 # Populate the comboboxes
-# Searching for the data by fetching
+# Searching for data by fetching
 order_types = slims.fetch("OrderType", None)
 content_types = slims.fetch("ContentType", equals("cntp_useBarcodeAsId", True))
 locations = slims.fetch("Location", None)
@@ -78,7 +83,7 @@ class CreateOrderFirst:
             return render.add_order(first, "CreateOrderFirst")
         else:
             second = second_form()
-            # Pass values from first into second
+            # Pass values from first into second forms
             second.OrderType.value = first.d.OrderType
             second.NewContentType.value = first.d.NewContentType
             second.LocationNewContent.value = first.d.LocationNewContent

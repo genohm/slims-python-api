@@ -2,8 +2,11 @@
 
     When creating a new record in SLims one needs to be careful about the
     mandatory fields to fill. For example creating a new content may require
-    an ID or not depending on whereas the associate box in its related content type
-    is checked or not.
+    an ID or not depending on whereas the associate box in its related content
+    type is checked or not.
+
+    run this script using the underneath command in the folder containing it.
+    python data_modification.py
 """
 from __future__ import print_function
 from slims.slims import Slims
@@ -14,17 +17,19 @@ import sys
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 
 # Example N_1: Creating a content record; here a Content of content type DNA
-#              in the location Building Test. Requires a location called "Building
-#              test" and a content type "DNA" (with barcode as id)
+#              in the location Building Test. Requires a location called
+#              "Building test" (of location type Building) and a content type
+#              "DNA" (with use barcode as id)
 
 print("Example 1")
-# Fetch for the content type DNA
+# Fetch DNA content type
 dna_type = slims.fetch("ContentType", equals("cntp_name", "DNA"))
 
 if not dna_type:
     sys.exit("No DNA Content type found, can not continue")
 
-# Fetch for the location freezer
+# Fetch Building Test location (ideally with location type Building,
+# but this is not mandatory)
 locations = slims.fetch("Location", equals("lctn_name", "Building Test"))
 
 if not locations:
@@ -44,11 +49,11 @@ print ("Content with status", created_dna.cntn_status.displayValue,
 # Example N_2: Creating another content record. Requires a content type "fish"
 #              for which "Use barcode as ID" is set to false.
 
-# Fetch for the content type fish
+# Fetch fish content type
 print ("Example 2")
 fish_type = slims.fetch("ContentType", equals("cntp_name", "fish"))
 if not fish_type:
-    sys.exit("No DNA Content type found, can not continue")
+    sys.exit("No fish Content type found, can not continue")
 
 print("Creating fish record...")
 created_fish = slims.add("Content",
@@ -67,13 +72,14 @@ print ("Content with status", created_fish.cntn_status.displayValue,
 # Example N_3: Creation of a result with test "weight" and link it to
 #              The previously created fish record.
 #              Requires a test with label "weight" and datatype quantity.
+#              unit is kg.
 
-# Fetch for the weight test
+# Fetch weight test
 print("Example 3")
 weight_test = slims.fetch("Test", equals("test_label", "weight"))
 
 if not weight_test:
-    sys.exit("No Weight test")
+    sys.exit("No Weight test found, can not continue")
 
 print("Creating the weight result...")
 created_result = slims.add("Result",
@@ -89,13 +95,13 @@ created_result = slims.add("Result",
                             }})
 
 print ("A result of value", created_result.rslt_value.value, created_result.rslt_value.unit,
-       "and linked to the content", created_fish.cntn_id.value,
+       ",  linked to the content", created_fish.cntn_id.value,
        "was created\n\n")
 
 
-# Example N_4: Modification of a result. We modify the result created in Example
-#              N_3. Let's say that the fish has gained weight and we update it
-#              to 0.5kg
+# Example N_4: Modification of a result. The result created in Example
+#              N_3 is modified. The fish has gained weight and the value
+#              is updated to 0.5kg
 
 print("Example 4")
 print("Modifying result...")
@@ -110,8 +116,7 @@ modified_result = created_result.update({'rslt_value': {
 print ("Result linked to content", created_fish.cntn_id.value,
        "has been modified to", modified_result.rslt_value.value, modified_result.rslt_value.unit, "\n\n")
 
-# Example N_5: Removing a contet record. Since the content created in example N_1 has
-#              not been used yet let's remove it.
+# Example N_5: Removing a content record created in Example 1
 print("Example 5")
 print("Removal of the content", created_dna.cntn_id.value, "...")
 created_dna.remove()

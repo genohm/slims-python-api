@@ -36,7 +36,7 @@ def _start_step(name, operation, step):
 
 
 def _flask_thread(port):
-    app.run(port=port)
+    app.run(port=port, host='0.0.0.0')
 
 
 class _SlimsApiException(Exception):

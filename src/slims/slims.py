@@ -30,7 +30,11 @@ def _start_step(name, operation, step):
     logger.info("Executing " + str(flow_information['flowId']) + " step " + step)
     return_value = slims_instances[name]._execute_operation(operation, step, data)
     if return_value:
-        return jsonify(**return_value)
+        if isinstance(return_value, list):
+            # FIXME hack: jsonify(**varArgs) does not work for a list
+            return jsonify(return_value)
+        else:
+            return jsonify(**return_value)
     else:
         return jsonify(**{})
 

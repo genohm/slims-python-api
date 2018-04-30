@@ -227,8 +227,10 @@ class Slims(object):
             Adds a content record with id "ID" in status pending with the content type
             with primary key 1
         """
-        response = self.slims_api.put(url=table, body=values).json()
-        new_values = response["entities"][0]
+        response = self.slims_api.put(url=table, body=values)
+        if response.status_code != 200:
+            raise _SlimsApiException("Add failed: " + response.text)
+        new_values = response.json()["entities"][0]
         return Record(new_values, self.slims_api)
 
     def add_flow(self, flow_id, name, usage, steps, testing=False):
@@ -347,8 +349,10 @@ class Record(object):
             its id to "new id"
         """
         url = self.table_name() + "/" + str(self.pk())
-        response = self.slims_api.post(url=url, body=values).json()
-        new_values = response["entities"][0]
+        response = self.slims_api.post(url=url, body=values)
+        if response.status_code != 200:
+            raise _SlimsApiException("Update failed: " + response.text)
+        new_values = response.json()["entities"][0]
         return Record(new_values, self.slims_api)
 
     def remove(self):
@@ -358,7 +362,7 @@ class Record(object):
         url = self.table_name() + "/" + str(self.pk())
         response = self.slims_api.delete(url=url)
         if response.status_code != 200:
-            raise Exception("Delete failed: " + response.text)
+            raise _SlimsApiException("Delete failed: " + response.text)
 
     def table_name(self):
         """

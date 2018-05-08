@@ -29,7 +29,7 @@ from slims.criteria import equals
 from slims.criteria import contains
 from slims.criteria import starts_with
 from slims.criteria import ends_with
-from slims.criteria import between_inclusive_match_case
+from slims.criteria import between_inclusive
 from slims.criteria import conjunction
 from slims.criteria import disjunction
 from slims.criteria import is_not
@@ -83,6 +83,6 @@ display_results(records, ["cntn_id"])
 # The sort is by cntn_barcode and then by cntn_id
 print("\n\nExample 5")
 records = slims.fetch("Content",
-                      is_not(between_inclusive_match_case("cntn_id", "00000002", "00000166")),
+                      is_not(between_inclusive("cntn_id", "00000002", "00000166")),
                       sort=["cntn_barCode", "cntn_id"])
 display_results(records, ["cntn_id"])

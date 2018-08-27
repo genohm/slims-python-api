@@ -1,12 +1,14 @@
 import base64
-import os
 import logging
-import requests
+import os
 import sched
-import time
 import threading
-from flask import request as flaskrequest
+import time
+
+import requests
 from flask import Flask, jsonify
+from flask import request as flaskrequest
+from requests_oauthlib import OAuth2Session
 from werkzeug.local import Local
 
 from .flowrun import FlowRun
@@ -39,6 +41,12 @@ def _start_step(name, operation, step):
         return jsonify(**{})
 
 
+@app.route("/<instance>/token", methods=["GET"])
+def _token_validator(instance):
+    slims_instances[instance].handle_oauth_code(flaskrequest.args.get('code'))
+    return 'Python instance "' + instance + '" registered'
+
+
 def _flask_thread(port):
     app.run(port=port, host='0.0.0.0')
 
@@ -51,6 +59,7 @@ class _SlimsApi(object):
 
     def __init__(self, url, username, password, repo_location):
         self.url = url + "/rest/"
+        self.raw_url = url + "/"
         self.username = username
         self.password = password
         self.repo_location = repo_location
@@ -143,6 +152,16 @@ class Slims(object):
         self.refresh_flows_thread.daemon = True
         self.local_host = local_host
         self.local_port = local_port
+        self.local_url = "http://" + self.local_host + ":" + str(self.local_port) + "/"
+        self.token = None
+        self.oauth = OAuth2Session(
+            "python-remote",
+            redirect_uri=self.local_url + self.name + "/token",
+            scope="api",
+            auto_refresh_url=self.slims_api.raw_url + "oauth/token", token_updater=self.token_updater)
+
+    def token_updater(self, token):
+        self.token = token
 
     def fetch(self, table, criteria, sort=[], start=None, end=None):
         """Fetch data by criteria
@@ -233,7 +252,7 @@ class Slims(object):
         new_values = response.json()["entities"][0]
         return Record(new_values, self.slims_api)
 
-    def add_flow(self, flow_id, name, usage, steps, testing=False):
+    def add_flow(self, flow_id, name, usage, steps):
         """Add a new SLimsGate flow to the slims interface
 
         Note:
@@ -269,12 +288,16 @@ class Slims(object):
 
         flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
         self.flow_definitions.append(flow)
-        self._register_flows([flow], False)
-
-        if not testing:
-            if not self.refresh_flows_thread.is_alive():
-                self.refresh_flows_thread.start()
+        if self.token is None:
+            print("Visit " + self.oauth.authorization_url(self.slims_api.raw_url + "oauth/authorize")[0])
             _flask_thread(self.local_port)
+        else:
+            self._register_flows([flow], False)
+
+    def handle_oauth_code(self, code):
+        self.token = self.oauth.fetch_token(self.slims_api.raw_url + 'oauth/token', code=code)
+        if not self.refresh_flows_thread.is_alive():
+            self.refresh_flows_thread.start()
 
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)
@@ -283,7 +306,7 @@ class Slims(object):
         try:
             instance = {'url': "http://" + self.local_host + ':' + str(self.local_port), 'name': self.name}
             body = {'instance': instance, 'flows': flows}
-            response = self.slims_api.post("external/", body)
+            response = self.oauth.post(self.slims_api.url + "external/", json=body, headers=_SlimsApi._headers())
 
             if response.status_code == 200:
                 logger.info("Successfully " + verb + "ed " + str(flow_ids))
@@ -304,12 +327,12 @@ class Slims(object):
         return output
 
     def _refresh_flows_thread_inner(self):
-        def refresh_flows(scheduler):
+        def refresh_flows(internal_scheduler):
             self._register_flows(self.flow_definitions, True)
-            scheduler.enter(60, 1, refresh_flows, (scheduler,))
+            internal_scheduler.enter(60, 1, refresh_flows, (internal_scheduler,))
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        scheduler.enter(60, 1, refresh_flows, (scheduler,))
+        scheduler.enter(5, 1, refresh_flows, (scheduler,))
         scheduler.run()
 
 

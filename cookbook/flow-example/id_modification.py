@@ -1,3 +1,5 @@
+import os
+
 from slims.slims import Slims
 from slims.step import Step, text_input, single_choice_with_value_map_input
 
@@ -7,8 +9,7 @@ a content record can be selected in the UI. In the second step a new id
 for that content record can be chosen.
 
 In Slims following parameters in lab settings should be configured:
-- Slims python-api token = devToken
-- Slims Python-api allowd urls and flow-ids = http://127.0.0.1:5000->updateContentId
+- Slims Python-api allowed urls and flow-ids = http://127.0.0.1:5000->updateContentId
 run this script using the underneath command in the folder containing it.
 python id_modification.py
 
@@ -27,10 +28,11 @@ def execute(flow_run):
     content_to_modify.update({"cntn_id": flow_run.data["id"]})
 
 
-slims = Slims("slims", "http://127.0.0.1:9999/", token="devToken")
-# devToken is a parameter to be set in Slims lab Settings (Slims python-api token).
-# It enables the authentication of the launcher of the flow.
-# Whenever SLims is not run on the same server as python, local_host="yourIp"
+# This environment variable needs to be set only if SLIMS REST is not running on HTTPS
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'True'
+
+slims = Slims("slims", "http://127.0.0.1:9999", username="admin", password="admin")
+# Whenever SLIMS is not run on the same server as python, local_host="yourIp"
 # parameter in Slims() method should be set.
 
 slims.add_flow(

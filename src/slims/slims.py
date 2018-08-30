@@ -57,21 +57,31 @@ class _SlimsApiException(Exception):
 
 class _SlimsApi(object):
 
-    def __init__(self, url, username, password, repo_location):
+    def __init__(self, url, username, password, repo_location, oauth=False, token_updater=None, redirect_url=""):
         self.url = url + "/rest/"
         self.raw_url = url + "/"
         self.username = username
         self.password = password
         self.repo_location = repo_location
+        self.oauth = oauth
+        if oauth:
+            self.oauth_session = OAuth2Session("python-remote",
+                                               redirect_uri=redirect_url,
+                                               scope="api",
+                                               auto_refresh_url=self.raw_url + "oauth/token",
+                                               token_updater=token_updater)
 
     def get_entities(self, url, body=None):
         if not url.startswith(self.url):
             url = self.url + url
 
-        response = requests.get(url,
-                                auth=(self.username, self.password),
-                                headers=_SlimsApi._headers(),
-                                json=body)
+        if self.oauth:
+            response = self.oauth_session.get(url, headers=_SlimsApi._headers(), json=body)
+        else:
+            response = requests.get(url,
+                                    auth=(self.username, self.password),
+                                    headers=_SlimsApi._headers(),
+                                    json=body)
         records = []
         if response.status_code == 200:
             for entity in response.json()["entities"]:
@@ -84,20 +94,38 @@ class _SlimsApi(object):
             raise _SlimsApiException("Could not fetch entities: " + response.text)
 
     def get(self, url):
-        return requests.get(self.url + url,
-                            auth=(self.username, self.password), headers=_SlimsApi._headers())
+        if self.oauth:
+            return self.oauth_session.get(self.url + url, headers=_SlimsApi._headers())
+        else:
+            return requests.get(self.url + url,
+                                auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def post(self, url, body):
-        return requests.post(self.url + url, json=body,
-                             auth=(self.username, self.password), headers=_SlimsApi._headers())
+        if self.oauth:
+            return self.oauth_session.post(self.url + url, json=body, headers=_SlimsApi._headers())
+        else:
+            return requests.post(self.url + url, json=body,
+                                 auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def put(self, url, body):
-        return requests.put(self.url + url, json=body,
-                            auth=(self.username, self.password), headers=_SlimsApi._headers())
+        if self.oauth:
+            return self.oauth_session.put(self.url + url, json=body, headers=_SlimsApi._headers())
+        else:
+            return requests.put(self.url + url, json=body,
+                                auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def delete(self, url):
-        return requests.delete(self.url + url,
-                               auth=(self.username, self.password), headers=_SlimsApi._headers())
+        if self.oauth:
+            return self.oauth_session.delete(self.url + url, headers=_SlimsApi._headers())
+        else:
+            return requests.delete(self.url + url,
+                                   auth=(self.username, self.password), headers=_SlimsApi._headers())
+
+    def authorization_url(self):
+        return self.oauth_session.authorization_url(self.raw_url + "oauth/authorize")[0]
+
+    def fetch_token(self, code):
+        return self.oauth_session.fetch_token(self.raw_url + 'oauth/token', code=code)
 
     @staticmethod
     def _headers():
@@ -116,7 +144,7 @@ class Slims(object):
         url (str): The url of the REST API of this slims instance
         username (str, optional): The username to login with (needed for standard operations)
         password (str, optional): The password to login with (needed for standard operations)
-        token (str, optional): The token to login with (needed to add SLimsGate flows)
+        oauth (bool, optional): Whether Oauth authentication is used
         repo_location (str, optional): The location of the file repository (this can
             be used to access attachments without needing to download them)
         local_host (str, optional): The IP on which this python script is running
@@ -138,10 +166,15 @@ class Slims(object):
                  local_port=5000):
 
         slims_instances[name] = self
+        self.local_host = local_host
+        self.local_port = local_port
+        self.local_url = "http://" + self.local_host + ":" + str(self.local_port) + "/"
         if username is not None and password is not None:
             self.slims_api = _SlimsApi(url, username, password, repo_location)
         elif oauth:
-            self.slims_api = _SlimsApi(url, "OAUTH", "oauth", repo_location)
+            self.slims_api = _SlimsApi(url, "OAUTH", "oauth", repo_location, True, self.token_updater,
+                                       self.local_url + name + "/token")
+            self.token = None
         else:
             raise Exception("Either specify a username and a password or use oauth")
 
@@ -151,22 +184,11 @@ class Slims(object):
         self.flow_definitions = []
         self.refresh_flows_thread = threading.Thread(target=self._refresh_flows_thread_inner)
         self.refresh_flows_thread.daemon = True
-        self.local_host = local_host
-        self.local_port = local_port
-        self.local_url = "http://" + self.local_host + ":" + str(self.local_port) + "/"
-
-        if oauth:
-            self.oauth = OAuth2Session(
-                "python-remote",
-                redirect_uri=self.local_url + self.name + "/token",
-                scope="api",
-                auto_refresh_url=self.slims_api.raw_url + "oauth/token", token_updater=self.token_updater)
-            self.token = None
 
     def token_updater(self, token):
         self.token = token
 
-    def fetch(self, table, criteria, sort=[], start=None, end=None):
+    def fetch(self, table, criteria, sort=None, start=None, end=None):
         """Fetch data by criteria
 
         The optional start and end parameters can be used to page the returned
@@ -200,6 +222,8 @@ class Slims(object):
             Fetches content records that have an id that starts with DNA. The
             returned list is sorted by cntn_barCode (descending).
         """
+        if sort is None:
+            sort = []
         body = {
             "sortBy": sort,
             "startRow": start,
@@ -297,13 +321,13 @@ class Slims(object):
         flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
         self.flow_definitions.append(flow)
         if self.token is None and not testing:
-            print("Visit " + self.oauth.authorization_url(self.slims_api.raw_url + "oauth/authorize")[0])
+            print("Visit " + self.slims_api.authorization_url())
             _flask_thread(self.local_port)
         else:
             self._register_flows([flow], False)
 
     def handle_oauth_code(self, code):
-        self.token = self.oauth.fetch_token(self.slims_api.raw_url + 'oauth/token', code=code)
+        self.token = self.slims_api.fetch_token(code)
         if not self.refresh_flows_thread.is_alive():
             self.refresh_flows_thread.start()
 
@@ -314,7 +338,7 @@ class Slims(object):
         try:
             instance = {'url': "http://" + self.local_host + ':' + str(self.local_port), 'name': self.name}
             body = {'instance': instance, 'flows': flows}
-            response = self.oauth.post(self.slims_api.url + "external/", json=body, headers=_SlimsApi._headers())
+            response = self.slims_api.post("external/", body)
 
             if response.status_code == 200:
                 logger.info("Successfully " + verb + "ed " + str(flow_ids))

@@ -45,15 +45,3 @@ class FlowRun(object):
             'status': status.name
         }
         self.slims_api.post("external/status", body)
-
-    def _check_user_secret(self):
-        body = {
-            'index': self.index,
-            'flowRunGuid': self.data["flowInformation"]["flowRunGuid"],
-            'username': self.data["SLIMS_CURRENT_USER"],
-            'secret': self.data["flowStepSecret"]
-        }
-        response = self.slims_api.post("external/userSecretCheck", body)
-        if response.status_code != 200:
-            logger.info("User secret check failed: " + response.json()["errorMessage"])
-            raise Exception("Forbidden access")

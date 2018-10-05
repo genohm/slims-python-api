@@ -84,7 +84,6 @@ class Step(object):
         try:
             if flow_run.data.get("SLIMS_CURRENT_USER") is not None:
                 _slims_local().user = flow_run.data["SLIMS_CURRENT_USER"]
-            flow_run._check_user_secret()
             value = self.action(flow_run)
             flow_run._update_status(Status.DONE)
             logger.info("Done running step %s", self.name)

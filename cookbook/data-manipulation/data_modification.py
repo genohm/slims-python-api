@@ -91,8 +91,7 @@ created_result = slims.add("Result",
                                                               .follow("tbfl_fk_unit")
                                                               .unit_abbreviation.value,
                                 'unit_pk': weight_test[0].follow("test_fk_resultTablefield")
-                                                         .tbfl_fk_unit.value
-                            }})
+                                                         .tbfl_fk_unit.value}})
 
 print ("A result of value", created_result.rslt_value.value, created_result.rslt_value.unit,
        ",  linked to the content", created_fish.cntn_id.value,
@@ -120,4 +119,4 @@ print ("Result linked to content", created_fish.cntn_id.value,
 print("Example 5")
 print("Removal of the content", created_dna.cntn_id.value, "...")
 created_dna.remove()
-print ("The content", created_dna.cntn_id.value,  "has been successfully removed")
+print ("The content", created_dna.cntn_id.value, "has been successfully removed")

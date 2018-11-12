@@ -29,7 +29,7 @@ register_form = form.Form(
 )
 
 urls = (
-  '/', 'DisplayReport',
+    '/', 'DisplayReport',
 )
 
 

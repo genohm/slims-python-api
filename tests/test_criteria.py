@@ -25,8 +25,8 @@ class Test_Criteria(unittest.TestCase):
     def test_conjunction(self):
         expected = {"operator": "and",
                     "criteria": [
-                         {"fieldName": "cntn_id", "operator": "equals", "value": "test"},
-                         {"fieldName": "cntn_barCode", "operator": "iStartsWith", "value": "blah"},
+                        {"fieldName": "cntn_id", "operator": "equals", "value": "test"},
+                        {"fieldName": "cntn_barCode", "operator": "iStartsWith", "value": "blah"},
                     ]}
         criteria = conjunction().add(equals("cntn_id", "test")).add(starts_with("cntn_barCode", "blah"))
         self.assertEqual(expected, criteria.to_dict())
@@ -34,7 +34,7 @@ class Test_Criteria(unittest.TestCase):
     def test_not(self):
         expected = {"operator": "not",
                     "criteria": [
-                         {"fieldName": "cntn_id", "operator": "equals", "value": "test"},
+                        {"fieldName": "cntn_id", "operator": "equals", "value": "test"},
                     ]}
 
         criteria = is_not(equals("cntn_id", "test"))

@@ -279,7 +279,7 @@ class Slims(object):
         new_values = response.json()["entities"][0]
         return Record(new_values, self.slims_api)
 
-    def add_flow(self, flow_id, name, usage, steps, testing=False):
+    def add_flow(self, flow_id, name, usage, steps, testing=False, last_flow=True):
         """Add a new SLimsGate flow to the slims interface
 
         Note:
@@ -291,7 +291,8 @@ class Slims(object):
             name(string): Displayed name of the the flow
             usage(string): Usage of the slimsgate flow
             steps(list step): The steps of the slimsgate flow
-            testing(bool): Dry run
+            testing(bool): Dry run=======
+            last_flow(boolean): Defines if this is the last flow you will add (Default True)
 
         Examples:
             >>> def hello_world(flow_run):
@@ -320,16 +321,12 @@ class Slims(object):
 
         flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
         self.flow_definitions.append(flow)
-        if self.token is None and not testing:
+        if self.token is None and not testing and last_flow:
             print("Visit " + self.slims_api.authorization_url())
             _flask_thread(self.local_port)
         else:
             self._register_flows([flow], False)
 
-    def handle_oauth_code(self, code):
-        self.token = self.slims_api.fetch_token(code)
-        if not self.refresh_flows_thread.is_alive():
-            self.refresh_flows_thread.start()
 
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)
@@ -343,7 +340,7 @@ class Slims(object):
             if response.status_code == 200:
                 logger.info("Successfully " + verb + "ed " + str(flow_ids))
             else:
-                logger.info("Could not " + verb + " " + str(flow_ids) +
+                logger.info("Could not " + verb + " " + str(flow_ids) +  # noqa: W504
                             " (HTTP Response code: " + str(response.status_code) + ")")
                 try:
                     logger.info("Reason: " + response.json()["errorMessage"])

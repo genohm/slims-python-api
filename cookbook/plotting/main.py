@@ -44,7 +44,7 @@ for result in results:
 # Calculation and creation of the new BMI result
 print ("Calculating BMI")
 for i in range(len(weights)):
-    BMI.append(weights[i]/(lengths[i]*lengths[i]))
+    BMI.append(weights[i] / (lengths[i] * lengths[i]))
 
 x_axis = [i for i in range(len(x_axis_values))]
 

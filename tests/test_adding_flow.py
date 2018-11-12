@@ -32,9 +32,7 @@ class Test_Adding_Flow(unittest.TestCase):
                            'output': {'parameters': [{'type': 'FILE', 'name': 'file'}]}
                            }
                       ],
-                      'pythonApiFlow': True
-                      }
-                 ]})
+                      'pythonApiFlow': True}]})
 
             return 200, {}, json.dumps({})
 

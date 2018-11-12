@@ -327,7 +327,6 @@ class Slims(object):
         else:
             self._register_flows([flow], False)
 
-
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)
         verb = "re-register" if is_reregister else "register"

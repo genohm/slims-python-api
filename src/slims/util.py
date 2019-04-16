@@ -44,7 +44,7 @@ def display_field_value(record, fields):
             elif record.column(field).subType in "datetime":
                 print(datetime.datetime.fromtimestamp(record.column(field).value / 1000.0), end=" ")
             else:
-                print(time.strftime("%H:%M", time.localtime(int(record.column(field).value)/1000)), end=" ")
+                print(time.strftime("%H:%M", time.localtime(int(record.column(field).value) / 1000)), end=" ")
         else:
             print(record.column(field).value, end=" ")
     print(end='\n',)

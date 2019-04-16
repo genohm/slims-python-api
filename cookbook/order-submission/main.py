@@ -62,9 +62,9 @@ second_form = form.Form(
 )
 
 urls = (
-  '/', 'CreateOrder',
-  '/CreateOrderFirst', 'CreateOrderFirst',
-  '/CreateOrderSecond', 'CreateOrderSecond',
+    '/', 'CreateOrder',
+    '/CreateOrderFirst', 'CreateOrderFirst',
+    '/CreateOrderSecond', 'CreateOrderSecond',
 )
 
 

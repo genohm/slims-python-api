@@ -106,8 +106,7 @@ class Test_Fetching_Data(unittest.TestCase):
             json={"entities": [{
                 "pk": 2,
                 "tableName": "ContentType",
-                "columns": []
-                }]},
+                "columns": []}]},
             content_type='application/json',
         )
 
@@ -148,8 +147,7 @@ class Test_Fetching_Data(unittest.TestCase):
             json={"entities": [{
                 "pk": 2,
                 "tableName": "Result",
-                "columns": []
-                }]},
+                "columns": []}]},
             content_type='application/json',
         )
 
@@ -163,11 +161,10 @@ class Test_Fetching_Data(unittest.TestCase):
             responses.GET,
             'http://localhost:9999/rest/Content/1',
             json={"entities": [{
-                 "pk": 1,
-                 "tableName": "Content",
-                 "columns": [],
-                 "links": []
-                 }]},
+                "pk": 1,
+                "tableName": "Content",
+                "columns": [],
+                "links": []}]},
             content_type='application/json',
         )
 

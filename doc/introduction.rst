@@ -6,6 +6,24 @@ The slims-python-api is a project that allows users to interact easily with SLim
 using python scripting. All communication is done via SLims' REST API so similar
 approaches could work for other programming languages.
 
+Installing slims-python-api
+---------------------------
+
+You install slims-python-api with pip. Make sure to install the version corresponding to your installed slims version.
+
+If you run SLIMS 6.3 you run
+
+.. code-block:: bash
+   
+   pip install 'slims-python-api>=6.3.0,<6.4.0'
+
+If you run SLIMS 6.2 you run
+
+.. code-block:: bash
+   
+   pip install 'slims-python-api>=6.2.0,<6.3.0'
+
+
 Some simple examples
 --------------------
 

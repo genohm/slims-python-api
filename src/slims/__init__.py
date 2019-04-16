@@ -1,4 +1,4 @@
-__version__ = "0.0.4"
+__version__ = "6.2.0"
 
 __title__ = "slims-python-api"
 __description__ = "A python api for SLims."

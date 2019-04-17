@@ -43,7 +43,7 @@ def _start_step(name, operation, step):
 
 @app.route("/<instance>/token", methods=["GET"])
 def _token_validator(instance):
-    slims_instances[instance].handle_oauth_code(flaskrequest.args.get('code'))
+    slims_instances[instance]._handle_oauth_code(flaskrequest.args.get('code'))
     return 'Python instance "' + instance + '" registered'
 
 
@@ -67,7 +67,7 @@ class _SlimsApi(object):
         if oauth:
             self.oauth_session = OAuth2Session("python-remote",
                                                redirect_uri=redirect_url,
-                                               scope="api",
+                                               scope=["api"],
                                                auto_refresh_url=self.raw_url + "oauth/token",
                                                token_updater=token_updater)
 
@@ -326,6 +326,11 @@ class Slims(object):
             _flask_thread(self.local_port)
         else:
             self._register_flows([flow], False)
+
+    def _handle_oauth_code(self, code):
+        self.token = self.slims_api.fetch_token(code)
+        if not self.refresh_flows_thread.is_alive():
+            self.refresh_flows_thread.start()
 
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)

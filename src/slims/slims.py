@@ -30,7 +30,8 @@ def _start_step(name, operation, step):
     flow_information = data['flowInformation']
 
     logger.info("Executing " + str(flow_information['flowId']) + " step " + step)
-    return_value = slims_instances[name]._execute_operation(operation, step, data)
+    return_value = slims_instances[name]._execute_operation(
+        operation, step, data)
     if return_value:
         if isinstance(return_value, list):
             # FIXME hack: jsonify(**varArgs) does not work for a list
@@ -57,15 +58,32 @@ class _SlimsApiException(Exception):
 
 class _SlimsApi(object):
 
-    def __init__(self, url, username, password, repo_location, oauth=False, token_updater=None, redirect_url=""):
+    def __init__(self,
+                 url,
+                 username,
+                 password,
+                 repo_location,
+                 oauth=False,
+                 token_updater=None,
+                 redirect_url="",
+                 client_id=None,
+                 client_secret=None):
         self.url = url + "/rest/"
         self.raw_url = url + "/"
         self.username = username
         self.password = password
         self.repo_location = repo_location
         self.oauth = oauth
+        self.client_id = client_id
+        self.client_secret = client_secret
         if oauth:
-            self.oauth_session = OAuth2Session("python-remote",
+            if self.client_id is None:
+                raise _SlimsApiException(
+                    "client_id is required when using OAuth")
+            if self.client_secret is None:
+                raise _SlimsApiException(
+                    "client_secret is required when using OAuth")
+            self.oauth_session = OAuth2Session(client_id,
                                                redirect_uri=redirect_url,
                                                scope=["api"],
                                                auto_refresh_url=self.raw_url + "oauth/token",
@@ -76,7 +94,8 @@ class _SlimsApi(object):
             url = self.url + url
 
         if self.oauth:
-            response = self.oauth_session.get(url, headers=_SlimsApi._headers(), json=body)
+            response = self.oauth_session.get(
+                url, headers=_SlimsApi._headers(), json=body)
         else:
             response = requests.get(url,
                                     auth=(self.username, self.password),
@@ -91,32 +110,47 @@ class _SlimsApi(object):
                     records.append(Record(entity, self))
             return records
         else:
-            raise _SlimsApiException("Could not fetch entities: " + response.text)
+            raise _SlimsApiException(
+                "Could not fetch entities: " + response.text)
 
     def get(self, url):
         if self.oauth:
-            return self.oauth_session.get(self.url + url, headers=_SlimsApi._headers())
+            return self.oauth_session.get(self.url + url,
+                                          headers=_SlimsApi._headers(),
+                                          client_id=self.client_id,
+                                          client_secret=self.client_secret)
         else:
             return requests.get(self.url + url,
                                 auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def post(self, url, body):
         if self.oauth:
-            return self.oauth_session.post(self.url + url, json=body, headers=_SlimsApi._headers())
+            return self.oauth_session.post(self.url + url,
+                                           json=body,
+                                           headers=_SlimsApi._headers(),
+                                           client_id=self.client_id,
+                                           client_secret=self.client_secret)
         else:
             return requests.post(self.url + url, json=body,
                                  auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def put(self, url, body):
         if self.oauth:
-            return self.oauth_session.put(self.url + url, json=body, headers=_SlimsApi._headers())
+            return self.oauth_session.put(self.url + url,
+                                          json=body,
+                                          headers=_SlimsApi._headers(),
+                                          client_id=self.client_id,
+                                          client_secret=self.client_secret)
         else:
             return requests.put(self.url + url, json=body,
                                 auth=(self.username, self.password), headers=_SlimsApi._headers())
 
     def delete(self, url):
         if self.oauth:
-            return self.oauth_session.delete(self.url + url, headers=_SlimsApi._headers())
+            return self.oauth_session.delete(self.url + url,
+                                             headers=_SlimsApi._headers(),
+                                             client_id=self.client_id,
+                                             client_secret=self.client_secret)
         else:
             return requests.delete(self.url + url,
                                    auth=(self.username, self.password), headers=_SlimsApi._headers())
@@ -125,7 +159,10 @@ class _SlimsApi(object):
         return self.oauth_session.authorization_url(self.raw_url + "oauth/authorize")[0]
 
     def fetch_token(self, code):
-        return self.oauth_session.fetch_token(self.raw_url + 'oauth/token', code=code)
+        return self.oauth_session.fetch_token(self.raw_url + 'oauth/token',
+                                              client_id=self.client_id,
+                                              client_secret=self.client_secret,
+                                              code=code)
 
     @staticmethod
     def _headers():
@@ -145,6 +182,8 @@ class Slims(object):
         username (str, optional): The username to login with (needed for standard operations)
         password (str, optional): The password to login with (needed for standard operations)
         oauth (bool, optional): Whether Oauth authentication is used
+        client_id (str, optional): The client ID used to authenticate when OAuth is true
+        client_secret (str, optional): The client secret used to authenticate when OAuth is true
         repo_location (str, optional): The location of the file repository (this can
             be used to access attachments without needing to download them)
         local_host (str, optional): The IP on which this python script is running
@@ -161,6 +200,8 @@ class Slims(object):
                  username=None,
                  password=None,
                  oauth=False,
+                 client_id=None,
+                 client_secret=None,
                  repo_location=None,
                  local_host="localhost",
                  local_port=5000):
@@ -168,21 +209,31 @@ class Slims(object):
         slims_instances[name] = self
         self.local_host = local_host
         self.local_port = local_port
-        self.local_url = "http://" + self.local_host + ":" + str(self.local_port) + "/"
+        self.local_url = "http://" + self.local_host + \
+            ":" + str(self.local_port) + "/"
         if username is not None and password is not None:
             self.slims_api = _SlimsApi(url, username, password, repo_location)
         elif oauth:
-            self.slims_api = _SlimsApi(url, "OAUTH", "oauth", repo_location, True, self.token_updater,
-                                       self.local_url + name + "/token")
+            self.slims_api = _SlimsApi(url,
+                                       "OAUTH",
+                                       "oauth",
+                                       repo_location,
+                                       True,
+                                       self.token_updater,
+                                       self.local_url + name + "/token",
+                                       client_id=client_id,
+                                       client_secret=client_secret)
             self.token = None
         else:
-            raise Exception("Either specify a username and a password or use oauth")
+            raise Exception(
+                "Either specify a username and a password or use oauth")
 
         self.name = name
         self.oauth = oauth
         self.operations = {}
         self.flow_definitions = []
-        self.refresh_flows_thread = threading.Thread(target=self._refresh_flows_thread_inner)
+        self.refresh_flows_thread = threading.Thread(
+            target=self._refresh_flows_thread_inner)
         self.refresh_flows_thread.daemon = True
 
     def token_updater(self, token):
@@ -319,7 +370,8 @@ class Slims(object):
             self.operations[url] = step
             i += 1
 
-        flow = {'id': flow_id, 'name': name, 'usage': usage, 'steps': step_dicts, 'pythonApiFlow': True}
+        flow = {'id': flow_id, 'name': name, 'usage': usage,
+                'steps': step_dicts, 'pythonApiFlow': True}
         self.flow_definitions.append(flow)
         if self.token is None and not testing and last_flow:
             print("Visit " + self.slims_api.authorization_url())
@@ -362,7 +414,8 @@ class Slims(object):
     def _refresh_flows_thread_inner(self):
         def refresh_flows(internal_scheduler):
             self._register_flows(self.flow_definitions, True)
-            internal_scheduler.enter(60, 1, refresh_flows, (internal_scheduler,))
+            internal_scheduler.enter(
+                60, 1, refresh_flows, (internal_scheduler,))
 
         scheduler = sched.scheduler(time.time, time.sleep)
         scheduler.enter(5, 1, refresh_flows, (scheduler,))

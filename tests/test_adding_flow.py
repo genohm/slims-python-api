@@ -43,7 +43,7 @@ class Test_Adding_Flow(unittest.TestCase):
             content_type='application/json',
         )
 
-        slims = Slims("testSlims", "https://localhost:9999", oauth=True)
+        slims = Slims("testSlims", "https://localhost:9999", oauth=True, client_id="client_id", client_secret="secret")
         slims.add_flow(
             flow_id="myFlow",
             name="My flow in python",

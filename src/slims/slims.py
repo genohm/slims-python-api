@@ -17,7 +17,7 @@ app = Flask(__name__)
 slims_instances = {}
 local = Local()
 logger = logging.getLogger('genohm.slims.slims')
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def _slims_local():
@@ -43,7 +43,7 @@ def _start_step(name, operation, step):
 
 @app.route("/<instance>/token", methods=["GET"])
 def _token_validator(instance):
-    slims_instances[instance].handle_oauth_code(flaskrequest.args.get('code'))
+    slims_instances[instance]._handle_oauth_code(flaskrequest.args.get('code'))
     return 'Python instance "' + instance + '" registered'
 
 
@@ -57,17 +57,23 @@ class _SlimsApiException(Exception):
 
 class _SlimsApi(object):
 
-    def __init__(self, url, username, password, repo_location, oauth=False, token_updater=None, redirect_url=""):
+    def __init__(self, url, username, password, repo_location, oauth=False, token_updater=None, redirect_url="", client_id=None, client_secret=None):
         self.url = url + "/rest/"
         self.raw_url = url + "/"
         self.username = username
         self.password = password
         self.repo_location = repo_location
         self.oauth = oauth
+        self.client_id = client_id
+        self.client_secret = client_secret
         if oauth:
+            if self.client_id is None:
+                raise _SlimsApiException("client_id is required when using OAuth")
+            if self.client_secret is None:
+                raise _SlimsApiException("client_secret is required when using OAuth")
             self.oauth_session = OAuth2Session("python-remote",
                                                redirect_uri=redirect_url,
-                                               scope="api",
+                                               scope=["api"],
                                                auto_refresh_url=self.raw_url + "oauth/token",
                                                token_updater=token_updater)
 
@@ -125,7 +131,7 @@ class _SlimsApi(object):
         return self.oauth_session.authorization_url(self.raw_url + "oauth/authorize")[0]
 
     def fetch_token(self, code):
-        return self.oauth_session.fetch_token(self.raw_url + 'oauth/token', code=code)
+        return self.oauth_session.fetch_token(self.raw_url + 'oauth/token', client_id=self.client_id, client_secret=self.client_secret, code=code)
 
     @staticmethod
     def _headers():
@@ -161,6 +167,8 @@ class Slims(object):
                  username=None,
                  password=None,
                  oauth=False,
+                 client_id=None,
+                 client_secret=None,
                  repo_location=None,
                  local_host="localhost",
                  local_port=5000):
@@ -173,7 +181,7 @@ class Slims(object):
             self.slims_api = _SlimsApi(url, username, password, repo_location)
         elif oauth:
             self.slims_api = _SlimsApi(url, "OAUTH", "oauth", repo_location, True, self.token_updater,
-                                       self.local_url + name + "/token")
+                                       self.local_url + name + "/token", client_id=client_id, client_secret=client_secret)
             self.token = None
         else:
             raise Exception("Either specify a username and a password or use oauth")
@@ -326,6 +334,12 @@ class Slims(object):
             _flask_thread(self.local_port)
         else:
             self._register_flows([flow], False)
+
+
+    def _handle_oauth_code(self, code):
+        self.token = self.slims_api.fetch_token(code)
+        if not self.refresh_flows_thread.is_alive():
+            self.refresh_flows_thread.start()
 
     def _register_flows(self, flows, is_reregister):
         flow_ids = map(lambda flow: flow.get('id'), flows)

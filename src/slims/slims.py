@@ -71,7 +71,7 @@ class _SlimsApi(object):
                 raise _SlimsApiException("client_id is required when using OAuth")
             if self.client_secret is None:
                 raise _SlimsApiException("client_secret is required when using OAuth")
-            self.oauth_session = OAuth2Session("python-remote",
+            self.oauth_session = OAuth2Session(client_id,
                                                redirect_uri=redirect_url,
                                                scope=["api"],
                                                auto_refresh_url=self.raw_url + "oauth/token",

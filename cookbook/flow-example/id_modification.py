@@ -31,7 +31,7 @@ def execute(flow_run):
 # This environment variable needs to be set only if SLIMS REST is not running on HTTPS
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'True'
 
-slims = Slims("slims", "http://127.0.0.1:9999", oauth=True)
+slims = Slims("slims", "http://127.0.0.1:9999", oauth=True, client_id="c5d4d038-c918-4fca-bfd4-121e415a433c", client_secret="d83a61a9568940f337632873376cf5c47854617bcfdb3d49b9319ac6c82d65b1")
 # Whenever SLIMS is not run on the same server as python, local_host="yourIp"
 # parameter in Slims() method should be set.
 

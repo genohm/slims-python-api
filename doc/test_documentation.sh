@@ -1,4 +1,4 @@
 #!/bin/bash
-sphinx-apidoc -f -o . ../src/ 
+sphinx-apidoc -o . ../src/ 
 make html 
 open _build/html/index.html    

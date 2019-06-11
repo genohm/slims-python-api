@@ -151,6 +151,8 @@ class Slims(object):
         username (str, optional): The username to login with (needed for standard operations)
         password (str, optional): The password to login with (needed for standard operations)
         oauth (bool, optional): Whether Oauth authentication is used
+        client_id (str, optional): The client ID used to authenticate when OAuth is true
+        client_secret (str, optional): The client secret used to authenticate when OAuth is true
         repo_location (str, optional): The location of the file repository (this can
             be used to access attachments without needing to download them)
         local_host (str, optional): The IP on which this python script is running

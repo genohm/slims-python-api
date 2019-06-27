@@ -2,6 +2,19 @@
 
 The SLims python api allows you to interact with your SLims instance by using Python. It allows you to extend the versatile capability of SLims even further.
 
+## Installing
+
+If you run SLIMS 6.3 you run
+
+```
+pip install 'slims-python-api>=6.3.0,<6.4.0'
+```
+
+If you run SLIMS 6.2 you run
+
+```   
+pip install 'slims-python-api>=6.2.0,<6.3.0'
+````
 
 ## Documentation
 

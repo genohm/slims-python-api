@@ -13,12 +13,12 @@ class Step(object):
     The step class defines the step properties of a SLimsGate flow.
     """
 
-    def __init__(self, name, action, async=False, hidden=False, input=[], output=[]):
+    def __init__(self, name, action, asynchronous=False, hidden=False, input=[], output=[]):
         """ Step class constructor.
         Args:
             name (string): name of the step
             action (-): action done by the step
-            async (bool): a boolean that give the asynchronicity of the step
+            asynchronous (bool): a boolean that give the asynchronicity of the step
                 its default value is False
             hidden (bool): a boolean that says if the step needs to be hidden
                 its default value is False
@@ -30,7 +30,7 @@ class Step(object):
         self.hidden = hidden
         self.input = input
         self.output = output
-        self.async = async
+        self.asynchronous = asynchronous
 
     def to_dict(self, route_id):
         """ Construct and return a dict with all (except action) class attribute and the route id passed by argument.
@@ -47,7 +47,7 @@ class Step(object):
                 'parameters': self.input
             },
             'process': {
-                'asynchronous': self.async,
+                'asynchronous': self.asynchronous,
                 'route': route_id,
             },
             'output': {
@@ -64,7 +64,7 @@ class Step(object):
                     if synchronous returns the value of action
                 """
         try:
-            if self.async:
+            if self.asynchronous:
                 logger.info("Starting to run step %s asynchronously", self.name)
                 return self._execute_async(flow_run)
             else:

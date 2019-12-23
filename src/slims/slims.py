@@ -396,7 +396,7 @@ class Slims(object):
             if response.status_code == 200:
                 logger.info("Successfully " + verb + "ed " + str(flow_ids))
             else:
-                logger.info("Could not " + verb + " " + str(flow_ids) +
+                logger.info("Could not " + verb + " " + str(flow_ids)
                             + " (HTTP Response code: " + str(response.status_code) + ")")
                 try:
                     logger.info("Reason: " + response.json()["errorMessage"])

@@ -100,8 +100,8 @@ class StepExecutionException(Exception):
     pass
 
 
-def _simple_input(name, label, type, **kwargs):
-    values = {'name': name, 'label': label, 'type': type}
+def _simple_input(name, label, fieldtype, **kwargs):
+    values = {'name': name, 'label': label, 'type': fieldtype}
     values.update(kwargs)
     return values
 

@@ -60,7 +60,7 @@ def find_meta(meta):
 VERSION = find_meta("version")
 URI = find_meta("uri")
 LONG = (
-    read("README.rst")
+    read("README.md")
 )
 
 
@@ -77,6 +77,7 @@ if __name__ == "__main__":
         maintainer_email=find_meta("email"),
         keywords=KEYWORDS,
         long_description=LONG,
+        long_description_content_type="text/markdown",
         packages=PACKAGES,
         package_dir={"": "src"},
         zip_safe=False,

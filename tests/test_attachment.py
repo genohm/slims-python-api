@@ -2,6 +2,7 @@ import unittest
 import responses
 import json
 import tempfile
+import os
 
 from slims.slims import Slims
 from slims.slims import Attachment
@@ -29,13 +30,13 @@ class Test_Attachments(unittest.TestCase):
     def test_attachment_path_with_repo_location(self):
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/var/slims/repo")
         attachment = Attachment(self.attachmentValues, slims.slims_api)
-        self.assertEqual("/var/slims/repo/a/file.txt", attachment.get_local_path())
+        self.assertEqual("/var/slims/repo" + os.sep + "a/file.txt", attachment.get_local_path())
 
     @responses.activate
     def test_add_attachment(self):
 
         def add_attachment_callback(request):
-            body = json.loads(request.body)
+            body = json.loads(request.body.decode('utf-8'))
             self.assertDictEqual(
                 body,
                 {"atln_recordPk": 1,
@@ -60,7 +61,7 @@ class Test_Attachments(unittest.TestCase):
     def test_download_attachment(self):
 
         def repo_request_callback(request):
-            return (200, {}, b"blabla")
+            return (200, {}, "blabla")
 
         responses.add_callback(
             responses.GET,
@@ -71,9 +72,10 @@ class Test_Attachments(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/var/slims/repo")
         attachment = Attachment(self.attachmentValues, slims.slims_api)
-        temp = tempfile.NamedTemporaryFile()
-        try:
-            attachment.download_to(temp.name)
-            self.assertEqual(b"blabla", temp.read())
-        finally:
-            temp.close()
+        temp = tempfile.NamedTemporaryFile(delete=False)
+        filename = temp.name
+        temp.close()
+        attachment.download_to(filename)
+        with open(filename, 'r') as file:
+            self.assertEqual("blabla", file.read())
+        os.remove(temp.name)

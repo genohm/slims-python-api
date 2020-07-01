@@ -53,7 +53,7 @@ class Test_Fetching_Data(unittest.TestCase):
     def test_fetch_advanced(self):
 
         def request_callback(request):
-            body = json.loads(request.body)
+            body = json.loads(request.body.decode('utf-8'))
             self.assertEqual(body["startRow"], 0)
             self.assertEqual(body["endRow"], 1)
             self.assertEqual(body["sortBy"], ["cntn_createdOn"])

@@ -223,7 +223,7 @@ def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
     Returns: (dict) a dictionary containing all these elements
     """
     return _choice_with_value_map_input(
-        name, label, "MULTIPLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, *kwargs)
+        name, label, "MULTIPLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
 def _choice_with_value_map_input(name,

@@ -60,7 +60,7 @@ def find_meta(meta):
 VERSION = find_meta("version")
 URI = find_meta("uri")
 LONG = (
-    read("README.rst")
+    read("README.md")
 )
 
 

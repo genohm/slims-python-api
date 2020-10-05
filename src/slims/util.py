@@ -33,18 +33,17 @@ def display_field_value(record, fields):
         fields(list): the fields to displayed
               it needs to be a list of string (["field"] or ["field1", "field2"])
     """
-
     for field in fields:
-        if record.column(field).datatype in "QUANTITY":
+        if record.column(field).datatype == "QUANTITY":
             print(record.column(field).value, end=" ")
             print(record.column(field).unit, end=" ")
-        elif record.column(field).datatype in "DATE":
-            if record.column(field).subType in "date":
+        elif record.column(field).datatype == "DATE":
+            if record.column(field).subType == "date":
                 print(datetime.date.fromtimestamp(record.column(field).value / 1000.0), end=" ")
-            elif record.column(field).subType in "datetime":
+            elif record.column(field).subType == "datetime":
                 print(datetime.datetime.fromtimestamp(record.column(field).value / 1000.0), end=" ")
             else:
-                print(time.strftime("%H:%M", time.localtime(int(record.column(field).value) / 1000)), end=" ")
+                print(time.strftime("%H:%M", time.gmtime(int(record.column(field).value) / 1000)), end=" ")
         else:
             print(record.column(field).value, end=" ")
     print(end='\n',)

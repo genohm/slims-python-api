@@ -33,12 +33,12 @@ x_axis_values = []
 print ("Fetching necessary data...")
 for result in results:
     # first identification the length Test results
-    if result.rslt_fk_test.displayValue in "length Test":
+    if result.rslt_fk_test.displayValue == "length Test":
         lengths.append(result.rslt_value.value)
         # Storage of content ID to display them on x axis
         x_axis_values.append(result.rslt_fk_content.displayValue)
     # first identification the weight Test results
-    if result.rslt_fk_test.displayValue in "weight test":
+    if result.rslt_fk_test.displayValue == "weight test":
         weights.append(result.rslt_value.value)
 
 # Calculation and creation of the new BMI result

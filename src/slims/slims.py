@@ -317,7 +317,7 @@ class Slims(object):
         Examples:
             >>> slims.add("Content", {
                     "cntn_id", "ID",
-                    "cntn_status", Status.PENDING,
+                    "cntn_status", Status.PENDING.value,
                     "cntn_fk_contentType", 1
                 })
 

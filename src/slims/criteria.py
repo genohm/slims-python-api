@@ -394,7 +394,7 @@ def disjunction():
     Examples:
         >>> slims.fetch("Content", disjunction()
                     .add(start_with("cntn_id", "DNA"))
-                    .add(greater_than("cntn_quantity", 5)
+                    .add(greater_than("cntn_quantity", 5)))
 
         Will fetch all the content records for which their id starts with
         "DNA" or their quantity is bigger than 5.

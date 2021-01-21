@@ -377,7 +377,7 @@ def conjunction():
     Examples:
         >>> slims.fetch("Content", conjunction()
                     .add(start_with("cntn_id", "DNA"))
-                    .add(greater_than("cntn_quantity", 5)
+                    .add(greater_than("cntn_quantity", 5)))
 
         Will fetch all the content records for which their id starts with
         "DNA" and their quantity is bigger than 5.

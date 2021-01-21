@@ -452,7 +452,7 @@ class Record(object):
 
         Examples:
             >>> content = slims.fetch_by_pk("Content", 1)
-                content.update({"cntn_id", "new id"})
+                content.update({"cntn_id": "new id"})
 
             Fetches the content record with primary key 1 and changes
             its id to "new id"

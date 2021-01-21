@@ -90,6 +90,8 @@ class _SlimsApi(object):
                                                token_updater=token_updater)
 
     def get_entities(self, url, body=None):
+        if(self.url.startswith('https') and url.startswith('http') and url[4:].startswith(self.url[5:])):
+            url = 'https' + url[4:]
         if not url.startswith(self.url):
             url = self.url + url
 

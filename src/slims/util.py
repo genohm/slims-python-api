@@ -38,7 +38,9 @@ def display_field_value(record, fields):
             print(record.column(field).value, end=" ")
             print(record.column(field).unit, end=" ")
         elif record.column(field).datatype == "DATE":
-            if record.column(field).subType == "date":
+            if not record.column(field).value:
+                print(None, end=" ")
+            elif record.column(field).subType == "date":
                 print(datetime.date.fromtimestamp(record.column(field).value / 1000.0), end=" ")
             elif record.column(field).subType == "datetime":
                 print(datetime.datetime.fromtimestamp(record.column(field).value / 1000.0), end=" ")

@@ -1,4 +1,5 @@
 import sys
+import datetime
 import unittest
 from contextlib import contextmanager
 from slims.util import display_field_value
@@ -49,16 +50,18 @@ class Test_Util(unittest.TestCase):
         content = {
             "columns": [
                 {"name": "cntn_datetime", "datatype": "DATE", "subType": "datetime", "value": 1610000000000},
-                {"name": "cntn_date", "datatype": "DATE", "subType": "date", "value": 1611000000000},
+                {"name": "cntn_date", "datatype": "DATE", "subType": "date", "value": 1602000000000},
                 {"name": "cntn_time", "datatype": "DATE", "subType": "time", "value": 36360000}]
         }
         rec = Record(content, None)
+        # must be converted with the same timezone as the code that is being tested
+        datetimevalue = datetime.datetime.fromtimestamp(content["columns"][0]["value"] / 1000.0)
 
         stringStream = StringIO()
         with redirect_stdout(stringStream):
             display_field_value(rec, ["cntn_datetime", "cntn_date", "cntn_time"])
 
-        self.assertEquals(stringStream.getvalue().strip(), "2021-01-07 07:13:20 2021-01-18 10:06")
+        self.assertEquals(stringStream.getvalue().strip(), str(datetimevalue) + " 2020-10-06 10:06")
 
     def test_display_field_value_date_nones(self):
         content = {

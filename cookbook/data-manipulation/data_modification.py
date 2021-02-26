@@ -41,16 +41,16 @@ created_dna = slims.add("Content",
                          'cntn_status': Status.AVAILABLE.value,
                          'cntn_fk_location': locations[0].pk()})
 
-print ("Content with status", created_dna.cntn_status.displayValue,
-       ", location", created_dna.cntn_fk_location.displayValue,
-       "and type", created_dna.cntn_fk_contentType.displayValue,
-       "has been created.\n\n")
+print("Content with status", created_dna.cntn_status.displayValue,
+      ", location", created_dna.cntn_fk_location.displayValue,
+      "and type", created_dna.cntn_fk_contentType.displayValue,
+      "has been created.\n\n")
 
 # Example N_2: Creating another content record. Requires a content type "fish"
 #              for which "Use barcode as ID" is set to false.
 
 # Fetch fish content type
-print ("Example 2")
+print("Example 2")
 fish_type = slims.fetch("ContentType", equals("cntp_name", "fish"))
 if not fish_type:
     sys.exit("No fish Content type found, can not continue")
@@ -63,11 +63,11 @@ created_fish = slims.add("Content",
                           'cntn_id': "Baby fish"
                           })
 
-print ("Content with status", created_fish.cntn_status.displayValue,
-       ", location", created_fish.cntn_fk_location.displayValue,
-       "type", created_fish.cntn_fk_contentType.displayValue,
-       "and id", created_fish.cntn_id.value,
-       "has been created.\n\n")
+print("Content with status", created_fish.cntn_status.displayValue,
+      ", location", created_fish.cntn_fk_location.displayValue,
+      "type", created_fish.cntn_fk_contentType.displayValue,
+      "and id", created_fish.cntn_id.value,
+      "has been created.\n\n")
 
 # Example N_3: Creation of a result with test "weight" and link it to
 #              The previously created fish record.
@@ -93,9 +93,9 @@ created_result = slims.add("Result",
                                 'unit_pk': weight_test[0].follow("test_fk_resultTablefield")
                                                          .tbfl_fk_unit.value}})
 
-print ("A result of value", created_result.rslt_value.value, created_result.rslt_value.unit,
-       ",  linked to the content", created_fish.cntn_id.value,
-       "was created\n\n")
+print("A result of value", created_result.rslt_value.value, created_result.rslt_value.unit,
+      ", linked to the content", created_fish.cntn_id.value,
+      "was created\n\n")
 
 
 # Example N_4: Modification of a result. The result created in Example
@@ -112,11 +112,11 @@ modified_result = created_result.update({'rslt_value': {
                                          'unit_pk': weight_test[0].follow("test_fk_resultTablefield")
                                                                   .tbfl_fk_unit.value
                                          }})
-print ("Result linked to content", created_fish.cntn_id.value,
-       "has been modified to", modified_result.rslt_value.value, modified_result.rslt_value.unit, "\n\n")
+print("Result linked to content", created_fish.cntn_id.value,
+      "has been modified to", modified_result.rslt_value.value, modified_result.rslt_value.unit, "\n\n")
 
 # Example N_5: Removing a content record created in Example 1
 print("Example 5")
 print("Removal of the content", created_dna.cntn_id.value, "...")
 created_dna.remove()
-print ("The content", created_dna.cntn_id.value, "has been successfully removed")
+print("The content", created_dna.cntn_id.value, "has been successfully removed")

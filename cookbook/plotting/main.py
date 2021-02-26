@@ -30,7 +30,7 @@ BMI = []
 x_axis_values = []
 
 # Identification of the result per test
-print ("Fetching necessary data...")
+print("Fetching necessary data...")
 for result in results:
     # first identification the length Test results
     if result.rslt_fk_test.displayValue == "length Test":
@@ -42,7 +42,7 @@ for result in results:
         weights.append(result.rslt_value.value)
 
 # Calculation and creation of the new BMI result
-print ("Calculating BMI")
+print("Calculating BMI")
 for i in range(len(weights)):
     BMI.append(weights[i] / (lengths[i] * lengths[i]))
 

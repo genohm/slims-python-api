@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+from typing import Any
 
 
 class _JunctionType(Enum):
@@ -10,7 +11,7 @@ class _JunctionType(Enum):
 
 class Criterion(object):
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         """ Serializes criterion to dictionary """
         raise NotImplementedError
 
@@ -18,11 +19,11 @@ class Criterion(object):
 class Expression(Criterion):
     """ A simple expression like 'cntn_id' equals 'test' """
 
-    def __init__(self, criterion):
+    def __init__(self, criterion: dict[str, Any]):
         self.criterion = criterion
 
-    def to_dict(self):
-        return_value = {}
+    def to_dict(self) -> dict[str, Any]:
+        return_value: dict[str, Any] = {}
         for key in self.criterion:
             value = self.criterion[key]
             if isinstance(value, datetime.datetime):
@@ -35,16 +36,16 @@ class Expression(Criterion):
 class Junction(Criterion):
     """ A combination of multiple criteria """
 
-    def __init__(self, operator):
+    def __init__(self, operator: _JunctionType):
         self.operator = operator
-        self.members = []
+        self.members: list[Criterion] = []
 
-    def add(self, member):
+    def add(self, member: Criterion) -> 'Junction':
         """ Adds a member to this junction """
         self.members.append(member)
         return self
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, Any]:
         member_dicts = []
         for member in self.members:
             member_dicts.append(member.to_dict())
@@ -54,7 +55,7 @@ class Junction(Criterion):
         }
 
 
-def equals(field, value):
+def equals(field: str, value: Any) -> Expression:
     """Applies an "equals" constraint to the specified field
 
     This is case-sensitive depending on the used database.
@@ -74,7 +75,7 @@ def equals(field, value):
     return Expression(_criterion(field, "equals", value))
 
 
-def equals_ignore_case(field, value):
+def equals_ignore_case(field: str, value: Any) -> Expression:
     """Applies an "equals" constraint to the specified field
 
     This is always case-insensitive
@@ -95,7 +96,7 @@ def equals_ignore_case(field, value):
 
 
 # Could be done by using the equals function and the NOT junction
-def not_equals(field, value):
+def not_equals(field: str, value: Any) -> Expression:
     """Applies an "not equals" constraint to the specified field
 
     Args:
@@ -113,7 +114,7 @@ def not_equals(field, value):
     return Expression(_criterion(field, "iNotEqual", value))
 
 
-def is_null(field):
+def is_null(field: str, value: Any) -> Expression:
     """Applies an "is null" constraint to the specified field
 
     Args:
@@ -131,7 +132,7 @@ def is_null(field):
 
 
 # Could be done by using the isNull function and the NOT junction
-def is_not_null(field):
+def is_not_null(field: str, value: Any) -> Expression:
     """Applies an "is not null" constraint to the specified field
 
     Args:
@@ -148,7 +149,7 @@ def is_not_null(field):
     return Expression(_criterion(field, "notNull", None))
 
 
-def starts_with(field, value):
+def starts_with(field: str, value: Any) -> Expression:
     """Applies a "starts with" constraint to the specified field
 
     Args:
@@ -166,7 +167,7 @@ def starts_with(field, value):
     return Expression(_criterion(field, "iStartsWith", value))
 
 
-def ends_with(field, value):
+def ends_with(field: str, value: Any) -> Expression:
     """Applies an "ends with" constraint to the specified field
 
     Args:
@@ -184,7 +185,7 @@ def ends_with(field, value):
     return Expression(_criterion(field, "iEndsWith", value))
 
 
-def contains(field, value):
+def contains(field: str, value: Any) -> Expression:
     """Applies a "contains" constraint to the specified field
 
     Args:
@@ -203,7 +204,7 @@ def contains(field, value):
 
 
 # For now, not defined in SLims
-def between_inclusive(field, start, end):
+def between_inclusive(field: str, start: Any, end: Any) -> Expression:
     """Applies a "between" constraint to the specified field
 
     Args:
@@ -222,7 +223,7 @@ def between_inclusive(field, start, end):
     return Expression(_criterionBetween(field, "betweenInclusive", start, end))
 
 
-def is_one_of(field, value):
+def is_one_of(field: str, value: list[Any]) -> Expression:
     """Applies an "is one of" constraint to the specified field
 
     Args:
@@ -239,7 +240,7 @@ def is_one_of(field, value):
 
 
 # Could be done by using the isOneOf function and the NOT junction
-def is_not_one_of(field, value):
+def is_not_one_of(field: str, value: list[Any]) -> Expression:
     """Applies an "is not one of" constraint to the specified field
 
     Args:
@@ -255,7 +256,7 @@ def is_not_one_of(field, value):
     return Expression(_criterion(field, "notInSet", value))
 
 
-def less_than(field, value):
+def less_than(field: str, value: Any) -> Expression:
     """Applies an "less than" constraint to the specified field
 
     Args:
@@ -273,7 +274,7 @@ def less_than(field, value):
     return Expression(_criterion(field, "lessThan", value))
 
 
-def greater_than(field, value):
+def greater_than(field: str, value: Any) -> Expression:
     """Applies an "greater than" constraint to the specified field
 
     Args:
@@ -291,7 +292,7 @@ def greater_than(field, value):
     return Expression(_criterion(field, "greaterThan", value))
 
 
-def less_than_or_equal(field, value):
+def less_than_or_equal(field: str, value: Any) -> Expression:
     """Applies an "less than or equal" constraint to the specified field
 
     Args:
@@ -310,7 +311,7 @@ def less_than_or_equal(field, value):
     return Expression(_criterion(field, "lessOrEqual", value))
 
 
-def greater_than_or_equal(field, value):
+def greater_than_or_equal(field: str, value: Any) -> Expression:
     """Applies an "greater than or equal" constraint to the specified field
 
     Args:
@@ -329,7 +330,7 @@ def greater_than_or_equal(field, value):
     return Expression(_criterion(field, "greaterOrEqual", value))
 
 
-def is_na(field):
+def is_na(field: str) -> Expression:
     """Applies a "is not applicable" constraint to the specified field (this is an
     option on custom fields
 
@@ -348,7 +349,7 @@ def is_na(field):
     return Expression(_criterion("isNaFilter", "equals", field))
 
 
-def _criterion(field, operator, value=None):
+def _criterion(field: str, operator: str, value: Any = None) -> dict[str, Any]:
     return_value = {
         "fieldName": field,
         "operator": operator
@@ -358,7 +359,7 @@ def _criterion(field, operator, value=None):
     return return_value
 
 
-def _criterionBetween(field, operator, start, end):
+def _criterionBetween(field: str, operator: str, start: Any, end: Any) -> dict[str, Any]:
     return_value = {
         "fieldName": field,
         "operator": operator,
@@ -368,7 +369,7 @@ def _criterionBetween(field, operator, start, end):
     return return_value
 
 
-def conjunction():
+def conjunction() -> Junction:
     """Combines multiple criteria in a conjunctive way (and)
 
     Returns:
@@ -385,7 +386,7 @@ def conjunction():
     return Junction(_JunctionType.AND)
 
 
-def disjunction():
+def disjunction() -> Junction:
     """Combines multiple criteria in a disjunctive way (or)
 
     Returns:
@@ -402,7 +403,7 @@ def disjunction():
     return Junction(_JunctionType.OR)
 
 
-def is_not(criterion):
+def is_not(criterion: Criterion) -> Junction:
     """Inverts a criterion
 
     Args:

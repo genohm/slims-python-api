@@ -1,7 +1,8 @@
 import base64
+from typing import Any
 
 
-def file_value(file_name):
+def file_value(file_name: str) -> dict[str, Any]:
     """
         Opens the file with file_name and returns its content as a string.
 

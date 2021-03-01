@@ -25,7 +25,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
 ]
-INSTALL_REQUIRES = ["flask>=0.11.1", "requests>=2.10.0", "enum34>=1.1.6", "requests_oauthlib>=1.0.0"]
+INSTALL_REQUIRES = ["flask>=1.1.0", "requests>=2.25.0", "requests_oauthlib>=1.3.0"]
 
 ###############################################################################
 

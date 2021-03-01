@@ -1,8 +1,9 @@
 import datetime
 import time
+from .slims import Record
 
 
-def display_results(records, fields, number=None):
+def display_results(records: list[Record], fields: list[str], number: int = None) -> None:
     """Prints to display the filtered results as a list of elements with their selected fields.
 
     Args:
@@ -24,7 +25,7 @@ def display_results(records, fields, number=None):
             display_field_value(record, fields)
 
 
-def display_field_value(record, fields):
+def display_field_value(record: Record, fields: list[str]) -> None:
     """Prints the results depending on the field.
 
     Args:

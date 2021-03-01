@@ -1,6 +1,8 @@
 import logging
 
 from enum import Enum
+from typing import Any
+from .api import _SlimsApi
 
 logger = logging.getLogger('genohm.slims.flowrun')
 
@@ -12,13 +14,12 @@ class Status(Enum):
 
 
 class FlowRun(object):
-
-    def __init__(self, slims_api, index, data):
+    def __init__(self, slims_api: _SlimsApi, index: str, data: dict[str, Any]):
         self.slims_api = slims_api
         self.index = index
         self.data = data
 
-    def log(self, message):
+    def log(self, message: str) -> None:
         """
         Logs a message to Slims
 
@@ -37,7 +38,7 @@ class FlowRun(object):
         }
         self.slims_api.post("external/log", body)
 
-    def _update_status(self, status):
+    def _update_status(self, status: Status) -> None:
         logger.info("Updating flowrun to status " + status.name)
         body = {
             'index': self.index,

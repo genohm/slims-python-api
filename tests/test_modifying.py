@@ -2,7 +2,7 @@ import unittest
 import responses
 
 from slims.slims import Slims
-from slims.slims import Record
+from slims.api import Record
 
 
 class Test_Modifying(unittest.TestCase):

@@ -3,7 +3,7 @@ import datetime
 import unittest
 from contextlib import contextmanager
 from slims.util import display_field_value
-from slims.slims import Record
+from slims.api import Record
 
 try:
     # Python 2

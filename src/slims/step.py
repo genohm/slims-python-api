@@ -1,9 +1,8 @@
 import logging
 import threading
 import traceback
-
-from .flowrun import Status
-from .slims import _slims_local
+from typing import Any, Callable
+from .flowrun import FlowRun, Status
 
 logger = logging.getLogger('genohm.slims.step')
 
@@ -13,7 +12,8 @@ class Step(object):
     The step class defines the step properties of a SLimsGate flow.
     """
 
-    def __init__(self, name, action, asynchronous=False, hidden=False, input=[], output=[], **kwargs):
+    def __init__(self, name: str, action: Callable, asynchronous: bool = False,
+                 hidden: bool = False, input: list = [], output: list = [], **kwargs: Any):
         """ Step class constructor.
         Args:
             name (string): name of the step
@@ -32,7 +32,7 @@ class Step(object):
         self.output = output
         self.asynchronous = asynchronous or (kwargs['async'] if 'async' in kwargs else False)
 
-    def to_dict(self, route_id):
+    def to_dict(self, route_id: str) -> dict[str, Any]:
         """ Construct and return a dict with all (except action) class attribute and the route id passed by argument.
         Args:
             route_id (string): id of the route
@@ -55,7 +55,7 @@ class Step(object):
             },
         }
 
-    def execute(self, flow_run):
+    def execute(self, flow_run: 'FlowRun') -> Any:
         """ takes id of the flow run and it executes the flow.
                 Args:
                     flow_run (object): flow to run
@@ -76,13 +76,14 @@ class Step(object):
             logger.info("Failed running step %s", self.name)
             raise StepExecutionException
 
-    def _execute_async(self, flow_run):
+    def _execute_async(self, flow_run: FlowRun) -> None:
         thr = threading.Thread(target=self._execute_inner, args=[flow_run])
         thr.start()
 
-    def _execute_inner(self, flow_run):
+    def _execute_inner(self, flow_run: FlowRun) -> Any:
         try:
             if flow_run.data.get("SLIMS_CURRENT_USER") is not None:
+                from .slims import _slims_local
                 _slims_local().user = flow_run.data["SLIMS_CURRENT_USER"]
             value = self.action(flow_run)
             flow_run._update_status(Status.DONE)
@@ -100,13 +101,13 @@ class StepExecutionException(Exception):
     pass
 
 
-def _simple_input(name, label, fieldtype, **kwargs):
+def _simple_input(name: str, label: str, fieldtype: str, **kwargs: Any) -> dict[str, Any]:
     values = {'name': name, 'label': label, 'type': fieldtype}
     values.update(kwargs)
     return values
 
 
-def text_input(name, label, **kwargs):
+def text_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have short text input for SLimsGate by return a dictionary.
 
     Args:
@@ -120,8 +121,8 @@ def text_input(name, label, **kwargs):
     return _simple_input(name, label, 'STRING', **kwargs)
 
 
-def single_choice_with_field_list_input(name, label, fieldelements, fieldtype=None,
-                                        **kwargs):
+def single_choice_with_field_list_input(name: str, label: str, fieldelements: list[Any],
+                                        fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a single choice out of a list input for SLimsGate.
 
     Args:
@@ -138,7 +139,8 @@ def single_choice_with_field_list_input(name, label, fieldelements, fieldtype=No
     return _choice_with_field_list_input(name, label, "SINGLE_CHOICE", fieldelements, fieldtype, **kwargs)
 
 
-def multiple_choice_with_field_list_input(name, label, fieldelements, fieldtype=None, **kwargs):
+def multiple_choice_with_field_list_input(name: str, label: str, fieldelements: list[Any],
+                                          fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a multiple choice out of a list input for SLimsGate.
 
     Args:
@@ -154,11 +156,12 @@ def multiple_choice_with_field_list_input(name, label, fieldelements, fieldtype=
     return _choice_with_field_list_input(name, label, "MULTIPLE_CHOICE", fieldelements, fieldtype, **kwargs)
 
 
-def _choice_with_field_list_input(name, label, datatype, fieldelements, fieldtype=None, **kwargs):
+def _choice_with_field_list_input(name: str, label: str, datatype: str, fieldelements: list[Any],
+                                  fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
     entries = []
     i = 0
     for fieldelement in fieldelements:
-        field = {}
+        field: dict[str, Any] = {}
         if fieldtype is not None:
             field['type'] = fieldtype[i]
         else:
@@ -177,9 +180,9 @@ def _choice_with_field_list_input(name, label, datatype, fieldelements, fieldtyp
     return values
 
 
-def single_choice_with_value_map_input(name, label, table=None, filtered=None,
-                                       reference=None, fixed_choice_custom_field=None,
-                                       **kwargs):
+def single_choice_with_value_map_input(name: str, label: str, table: str = None, filtered: Any = None,
+                                       reference: str = None, fixed_choice_custom_field: str = None,
+                                       **kwargs: Any) -> dict[str, Any]:
     """Allows to have a single choice out of a list input for SLimsGate.
 
     Args:
@@ -202,9 +205,9 @@ def single_choice_with_value_map_input(name, label, table=None, filtered=None,
         name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
-def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
-                                         reference=None, fixed_choice_custom_field=None,
-                                         **kwargs):
+def multiple_choice_with_value_map_input(name: str, label: str, table: str = None, filtered: Any = None,
+                                         reference: str = None, fixed_choice_custom_field: str = None,
+                                         **kwargs: Any) -> dict[str, Any]:
     """Allows to have a multiple choice out of a list input for SLimsGate.
 
     Args:
@@ -226,14 +229,9 @@ def multiple_choice_with_value_map_input(name, label, table=None, filtered=None,
         name, label, "MULTIPLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
-def _choice_with_value_map_input(name,
-                                 label,
-                                 datatype,
-                                 table,
-                                 filtered,
-                                 reference,
-                                 fixed_choice_custom_field,
-                                 **kwargs):
+def _choice_with_value_map_input(name: str, label: str, datatype: str = None, table: str = None,
+                                 filtered: Any = None, reference: str = None,
+                                 fixed_choice_custom_field: str = None, **kwargs: Any) -> dict[str, Any]:
     value_map = {
         'filter': filtered,
         'reference': reference,
@@ -250,7 +248,7 @@ def _choice_with_value_map_input(name,
     return values
 
 
-def date_input(name, label, **kwargs):
+def date_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a date input for SLimsGate.
 
     Args:
@@ -264,7 +262,7 @@ def date_input(name, label, **kwargs):
     return _simple_input(name, label, 'DATE', **kwargs)
 
 
-def date_time_input(name, label, **kwargs):
+def date_time_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a date and time input for SLimsGate.
 
     Args:
@@ -278,7 +276,7 @@ def date_time_input(name, label, **kwargs):
     return _simple_input(name, label, 'DATETIME', **kwargs)
 
 
-def time_input(name, label, **kwargs):
+def time_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a time input for SLimsGate.
 
     Args:
@@ -292,7 +290,7 @@ def time_input(name, label, **kwargs):
     return _simple_input(name, label, 'TIME', **kwargs)
 
 
-def boolean_input(name, label, **kwargs):
+def boolean_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a yes or no choice input for SLimsGate.
 
     Args:
@@ -306,7 +304,7 @@ def boolean_input(name, label, **kwargs):
     return _simple_input(name, label, 'BOOLEAN', **kwargs)
 
 
-def rich_text_input(name, label, **kwargs):
+def rich_text_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have rich text input for SLimsGate.
 
     Args:
@@ -320,7 +318,7 @@ def rich_text_input(name, label, **kwargs):
     return _simple_input(name, label, 'TEXT', **kwargs)
 
 
-def integer_input(name, label, **kwargs):
+def integer_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have integer input for SLimsGate.
 
     Args:
@@ -334,7 +332,7 @@ def integer_input(name, label, **kwargs):
     return _simple_input(name, label, 'INTEGER', **kwargs)
 
 
-def float_input(name, label, **kwargs):
+def float_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have float input for SLimsGate.
 
     Args:
@@ -348,7 +346,7 @@ def float_input(name, label, **kwargs):
     return _simple_input(name, label, 'FLOAT', **kwargs)
 
 
-def password_input(name, label, **kwargs):
+def password_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a password input for SLimsGate.
 
     Args:
@@ -362,7 +360,7 @@ def password_input(name, label, **kwargs):
     return _simple_input(name, label, 'PASSWORD', **kwargs)
 
 
-def table_input(name, label, subparameters, **kwargs):
+def table_input(name: str, label: str, subparameters: list[Any], **kwargs: Any) -> dict[str, Any]:
     """Allows to have a table input for SLimsGate.
 
     Args:
@@ -381,7 +379,7 @@ def table_input(name, label, subparameters, **kwargs):
 
 # Message display by SLims
 # File input and output together are currently not supported
-def file_input(name, label, **kwargs):
+def file_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a file input for SLimsGate.
 
     Args:
@@ -395,7 +393,7 @@ def file_input(name, label, **kwargs):
     return _simple_input(name, label, "FILE", **kwargs)
 
 
-def file_output():
+def file_output() -> dict[str, str]:
     """Allows to have a file output for SLimsGate.
 
     Returns: file output to download in client side
@@ -403,7 +401,7 @@ def file_output():
     return {'name': 'file', 'type': 'FILE'}
 
 
-def value_map_output(name, datatype):
+def value_map_output(name: str, datatype: str) -> dict[str, str]:
     """Allows to have a value map output for SLimsGate.
 
     Args:

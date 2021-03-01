@@ -5,8 +5,7 @@ import tempfile
 import os
 
 from slims.slims import Slims
-from slims.slims import Attachment
-from slims.slims import Record
+from slims.api import Attachment, Record
 
 
 class Test_Attachments(unittest.TestCase):

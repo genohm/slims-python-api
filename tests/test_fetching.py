@@ -3,8 +3,7 @@ import json
 import responses
 
 from slims.slims import Slims
-from slims.slims import Record
-from slims.slims import Attachment
+from slims.api import Record, Attachment
 from slims.criteria import equals
 
 

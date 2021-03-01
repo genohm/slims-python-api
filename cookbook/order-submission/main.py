@@ -9,12 +9,11 @@
     python main.py 7777
     this way the report can be accessed on http://localhost:7777
 """
+import sys
 import web
 from web import form
 from slims.slims import Slims
-from slims.criteria import is_not
-from slims.criteria import equals
-from slims.content import Status
+from slims.criteria import is_not, conjunction, equals
 
 
 render = web.template.render('templates/')
@@ -94,12 +93,17 @@ class CreateOrderSecond:
 
     def POST(self):
         second = second_form()
+        status = slims.fetch("Status", conjunction()
+                             .add(equals("stts_name", "Pending"))
+                             .add(equals("stts_fk_table", 2)))
+        if not status:
+            sys.exit("Could not find an active Status called 'Pending' on Content, cannot continue")
         if not second.validates():
             return render.add_order(second, "CreateOrderSecond")
         else:
             added_content = slims.add('Content', {
                 'cntn_fk_contentType': dic_content_type[second.d.NewContentType].pk(),
-                'cntn_status': Status.PENDING.value,
+                'cntn_fk_status': status[0].pk(),
                 'cntn_fk_location': dic_location[second.d.LocationNewContent].pk()
             })
 

@@ -47,7 +47,7 @@ created_dna = slims.add("Content",
                          'cntn_fk_status': statuses[0].pk(),
                          'cntn_fk_location': locations[0].pk()})
 
-print("Content with status", created_dna.cntn_status.displayValue,
+print("Content with status", created_dna.cntn_fk_status.displayValue,
       ", location", created_dna.cntn_fk_location.displayValue,
       "and type", created_dna.cntn_fk_contentType.displayValue,
       "has been created.\n\n")
@@ -69,7 +69,7 @@ created_fish = slims.add("Content",
                           'cntn_id': "Baby fish"
                           })
 
-print("Content with status", created_fish.cntn_status.displayValue,
+print("Content with status", created_fish.cntn_fk_status.displayValue,
       ", location", created_fish.cntn_fk_location.displayValue,
       "type", created_fish.cntn_fk_contentType.displayValue,
       "and id", created_fish.cntn_id.value,

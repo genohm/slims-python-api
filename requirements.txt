@@ -1,4 +1,4 @@
-flask==0.11.1
-requests==2.22.0
-enum34==1.1.6
-requests_oauthlib==1.0.0
+flask==1.1.2
+requests==2.25.1
+enum34==1.1.10
+requests_oauthlib==1.3.0

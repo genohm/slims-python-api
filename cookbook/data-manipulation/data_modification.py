@@ -8,10 +8,8 @@
     run this script using the underneath command in the folder containing it.
     python data_modification.py
 """
-from __future__ import print_function
 from slims.slims import Slims
-from slims.criteria import equals
-from slims.content import Status
+from slims.criteria import equals, conjunction
 import sys
 
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
@@ -35,10 +33,18 @@ locations = slims.fetch("Location", equals("lctn_name", "Building Test"))
 if not locations:
     sys.exit("No location called Building Test found, can not continue")
 
+# Fetch the Pending status on Content
+statuses = slims.fetch("Status", conjunction()
+                       .add(equals("stts_name", "Pending"))
+                       .add(equals("stts_fk_table", 2)))
+
+if not statuses:
+    sys.exit("Could not find an active Status called 'Pending' on Content, can not continue")
+
 print("Creating DNA Record...")
 created_dna = slims.add("Content",
                         {'cntn_fk_contentType': dna_type[0].pk(),
-                         'cntn_status': Status.AVAILABLE.value,
+                         'cntn_fk_status': statuses[0].pk(),
                          'cntn_fk_location': locations[0].pk()})
 
 print("Content with status", created_dna.cntn_status.displayValue,
@@ -58,7 +64,7 @@ if not fish_type:
 print("Creating fish record...")
 created_fish = slims.add("Content",
                          {'cntn_fk_contentType': fish_type[0].pk(),
-                          'cntn_status': Status.AVAILABLE.value,
+                          'cntn_fk_status': statuses[0].pk(),
                           'cntn_fk_location': locations[0].pk(),
                           'cntn_id': "Baby fish"
                           })

@@ -9,7 +9,6 @@
     python main.py 7777
     this way the report can be accessed on http://localhost:7777
 """
-from __future__ import print_function
 import web
 from web import form
 from slims.slims import Slims

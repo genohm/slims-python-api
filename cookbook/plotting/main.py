@@ -11,7 +11,6 @@
     run this script using the underneath command in the folder plotting
     python main.py
 """
-from __future__ import division
 from slims.slims import Slims
 from slims.criteria import equals, is_one_of
 import matplotlib.pyplot as plt

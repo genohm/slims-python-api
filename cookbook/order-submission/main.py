@@ -1,9 +1,10 @@
 """ In this sample web application, a user can create a content record,  an
     order and select one requet
 
-    This is written using web.py (pip install web.py) and demonstrates
-    some fetching and inserting of data via the REST api. #be careful, web.py
-    does not work with python 3.x
+    This app demonstrates some fetching and inserting of data via the REST api.
+    It is written using web.py, which you can install by running the following command:
+
+    $ pip install web.py
 
     Launch the script from within the order-submission folder with the command
     python main.py 7777

@@ -3,8 +3,8 @@ import unittest
 
 import responses
 
-from slims.api import Attachment, Record
 from slims.criteria import equals
+from slims.internal import Attachment, Record
 from slims.slims import Slims
 
 

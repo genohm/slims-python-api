@@ -4,7 +4,7 @@ import unittest
 from contextlib import contextmanager
 from io import StringIO
 
-from slims.api import Record
+from slims.internal import Record
 from slims.util import display_field_value
 
 

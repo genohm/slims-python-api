@@ -2,7 +2,7 @@ import unittest
 
 import responses
 
-from slims.api import Record
+from slims.internal import Record
 from slims.slims import Slims
 
 

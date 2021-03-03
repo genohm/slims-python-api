@@ -114,7 +114,7 @@ def not_equals(field: str, value: Any) -> Expression:
     return Expression(_criterion(field, "iNotEqual", value))
 
 
-def is_null(field: str, value: Any) -> Expression:
+def is_null(field: str) -> Expression:
     """Applies an "is null" constraint to the specified field
 
     Args:
@@ -132,7 +132,7 @@ def is_null(field: str, value: Any) -> Expression:
 
 
 # Could be done by using the isNull function and the NOT junction
-def is_not_null(field: str, value: Any) -> Expression:
+def is_not_null(field: str) -> Expression:
     """Applies an "is not null" constraint to the specified field
 
     Args:

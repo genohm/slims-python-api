@@ -56,7 +56,7 @@ class Step(object):
             },
         }
 
-    def execute(self, flow_run: 'FlowRun') -> Any:
+    def execute(self, flow_run: FlowRun) -> Any:
         """ takes id of the flow run and it executes the flow.
                 Args:
                     flow_run (object): flow to run

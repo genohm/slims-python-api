@@ -7,8 +7,8 @@ from typing import Any, List, Optional
 from flask import Flask, Response, jsonify
 from flask import request as flaskrequest
 
-from .api import Record, _SlimsApi, _SlimsApiException
 from .criteria import Criterion
+from .internal import Record, _SlimsApi, _SlimsApiException
 from .step import Step
 
 app = Flask(__name__)

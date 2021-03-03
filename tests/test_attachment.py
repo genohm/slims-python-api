@@ -1,11 +1,12 @@
-import unittest
-import responses
 import json
-import tempfile
 import os
+import tempfile
+import unittest
 
-from slims.slims import Slims
+import responses
+
 from slims.api import Attachment, Record
+from slims.slims import Slims
 
 
 class Test_Attachments(unittest.TestCase):

@@ -1,7 +1,7 @@
 import os
 
 from slims.slims import Slims
-from slims.step import Step, text_input, single_choice_with_value_map_input
+from slims.step import Step, single_choice_with_value_map_input, text_input
 
 """
 This example demonstrates a very simple two steps flow. In the first step

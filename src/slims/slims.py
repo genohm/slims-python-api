@@ -2,14 +2,14 @@ import logging
 import sched
 import threading
 import time
-
-from flask import Flask, jsonify, Response
-from flask import request as flaskrequest
 from typing import Any, List, Optional
 
-from .step import Step
+from flask import Flask, Response, jsonify
+from flask import request as flaskrequest
+
+from .api import Record, _SlimsApi, _SlimsApiException
 from .criteria import Criterion
-from .api import _SlimsApi, _SlimsApiException, Record
+from .step import Step
 
 app = Flask(__name__)
 slims_instances: dict[str, 'Slims'] = {}

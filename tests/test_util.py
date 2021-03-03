@@ -1,16 +1,11 @@
-import sys
 import datetime
+import sys
 import unittest
 from contextlib import contextmanager
-from slims.util import display_field_value
-from slims.api import Record
+from io import StringIO
 
-try:
-    # Python 2
-    from StringIO import StringIO
-except ImportError:
-    # Python 3
-    from io import StringIO
+from slims.api import Record
+from slims.util import display_field_value
 
 
 @contextmanager

@@ -1,10 +1,11 @@
-import unittest
 import json
+import unittest
+
 import responses
 
-from slims.slims import Slims
-from slims.api import Record, Attachment
+from slims.api import Attachment, Record
 from slims.criteria import equals
+from slims.slims import Slims
 
 
 class Test_Fetching_Data(unittest.TestCase):

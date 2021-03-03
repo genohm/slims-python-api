@@ -11,9 +11,10 @@
     run this script using the underneath command in the folder plotting
     python main.py
 """
-from slims.slims import Slims
-from slims.criteria import equals, is_one_of
 import matplotlib.pyplot as plt
+
+from slims.criteria import equals, is_one_of
+from slims.slims import Slims
 
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 

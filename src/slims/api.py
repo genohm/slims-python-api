@@ -1,10 +1,10 @@
-from requests_oauthlib import OAuth2Session
-import requests
-from werkzeug.local import Local
 import base64
 import os
 from typing import Any, Callable, List, Optional, Sequence, Union
 
+import requests
+from requests_oauthlib import OAuth2Session
+from werkzeug.local import Local
 
 local = Local()
 

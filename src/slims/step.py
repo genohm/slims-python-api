@@ -2,6 +2,7 @@ import logging
 import threading
 import traceback
 from typing import Any, Callable
+
 from .flowrun import FlowRun, Status
 
 logger = logging.getLogger('genohm.slims.step')

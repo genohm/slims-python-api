@@ -1,11 +1,13 @@
 """This web application is displaying on a web page a live report for a selected
    period.
-   This script requires dateutils and web.py (pip install web.py dateutils)
-   #be careful, web.py does not work with python 3.x
+
+    It requires web.py and dateutils, which you can install as follows:
+
+    $ pip install web.py dateutils
 
    Launch the script from within the live-report folder with the command
    python main.py 7777
-   this way the report can be accessed on http://0.0.0.0:7777 (as shown on the
+   this way the report can be accessed on http://localhost:7777 (as shown on the
    terminal)
 """
 

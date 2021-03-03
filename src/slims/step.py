@@ -4,6 +4,7 @@ import traceback
 from typing import Any, Callable
 
 from .flowrun import FlowRun, Status
+from .internal import _slims_local
 
 logger = logging.getLogger('genohm.slims.step')
 
@@ -84,7 +85,6 @@ class Step(object):
     def _execute_inner(self, flow_run: FlowRun) -> Any:
         try:
             if flow_run.data.get("SLIMS_CURRENT_USER") is not None:
-                from .slims import _slims_local
                 _slims_local().user = flow_run.data["SLIMS_CURRENT_USER"]
             value = self.action(flow_run)
             flow_run._update_status(Status.DONE)

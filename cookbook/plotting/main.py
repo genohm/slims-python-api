@@ -22,7 +22,7 @@ slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 patients = slims.fetch("Content", equals("cntp_name", "Patient"))
 patient_pks = map(lambda patient: patient.pk(), patients)
 
-results = slims.fetch("Result", is_one_of("rslt_fk_content", patient_pks))
+results = slims.fetch("Result", is_one_of("rslt_fk_content", list(patient_pks)))
 
 lengths = []
 weights = []

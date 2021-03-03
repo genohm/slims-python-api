@@ -1,4 +1,5 @@
 from enum import Enum
+
 from deprecation import deprecated
 
 

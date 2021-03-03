@@ -1,10 +1,10 @@
-import unittest
 import json
+import unittest
+
 import responses
 
+from slims.flowrun import FlowRun, Status
 from slims.slims import Slims
-from slims.flowrun import FlowRun
-from slims.flowrun import Status
 
 
 class Test_Flow_Run(unittest.TestCase):

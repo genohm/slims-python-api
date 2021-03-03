@@ -10,11 +10,13 @@
 """
 
 import datetime
+
 import web
 from dateutil.relativedelta import relativedelta
 from web import form
-from slims.slims import Slims
+
 from slims.criteria import between_inclusive
+from slims.slims import Slims
 
 render = web.template.render('templates/')
 slims = Slims("slims", "http://slimstest.genohm.com/coming", "admin", "admin")

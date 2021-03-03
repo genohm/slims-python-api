@@ -1,7 +1,7 @@
 import logging
-
 from enum import Enum
 from typing import Any
+
 from .api import _SlimsApi
 
 logger = logging.getLogger('genohm.slims.flowrun')

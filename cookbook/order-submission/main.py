@@ -10,11 +10,12 @@
     this way the report can be accessed on http://localhost:7777
 """
 import sys
+
 import web
 from web import form
-from slims.slims import Slims
-from slims.criteria import is_not, conjunction, equals
 
+from slims.criteria import conjunction, equals, is_not
+from slims.slims import Slims
 
 render = web.template.render('templates/')
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")

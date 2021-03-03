@@ -1,6 +1,6 @@
+from slims.output import file_value
 from slims.slims import Slims
 from slims.step import Step, file_output
-from slims.output import file_value
 
 
 def execute():

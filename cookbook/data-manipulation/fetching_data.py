@@ -23,16 +23,10 @@
     run this script using the underneath command in the folder containing it.
     python data_modification.py
 """
+from slims.criteria import (between_inclusive, conjunction, contains,
+                            disjunction, ends_with, equals, is_not,
+                            is_not_null, starts_with)
 from slims.slims import Slims
-from slims.criteria import is_not_null
-from slims.criteria import equals
-from slims.criteria import contains
-from slims.criteria import starts_with
-from slims.criteria import ends_with
-from slims.criteria import between_inclusive
-from slims.criteria import conjunction
-from slims.criteria import disjunction
-from slims.criteria import is_not
 from slims.util import display_results
 
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")

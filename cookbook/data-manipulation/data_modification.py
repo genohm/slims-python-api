@@ -8,9 +8,10 @@
     run this script using the underneath command in the folder containing it.
     python data_modification.py
 """
-from slims.slims import Slims
-from slims.criteria import equals, conjunction
 import sys
+
+from slims.criteria import conjunction, equals
+from slims.slims import Slims
 
 slims = Slims("slims", "http://localhost:9999", "admin", "admin")
 

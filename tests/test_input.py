@@ -1,8 +1,6 @@
 import unittest
 
-from slims.step import single_choice_with_field_list_input
-from slims.step import single_choice_with_value_map_input
-from slims.step import text_input
+from slims.step import single_choice_with_field_list_input, single_choice_with_value_map_input, text_input
 
 
 class Test_Slimsgate_Input(unittest.TestCase):

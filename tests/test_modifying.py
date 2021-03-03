@@ -1,8 +1,9 @@
 import unittest
+
 import responses
 
-from slims.slims import Slims
 from slims.api import Record
+from slims.slims import Slims
 
 
 class Test_Modifying(unittest.TestCase):

@@ -3,3 +3,4 @@ coverage
 responses
 mock
 mypy
+types-requests

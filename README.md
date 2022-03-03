@@ -51,8 +51,7 @@ If you want to contribute to the project, we welcome any addition and we will me
 
 
 ## Questions, Suggestions
-If you have any questions or suggestions on for our python API don't hesitate to open issues on this github repository.
-
+If you have any questions/suggestions or defects, please use the Agilent service desk (https://servicedesk.li.agilent.com/support)
 
 
 

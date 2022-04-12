@@ -65,7 +65,7 @@ class Slims(object):
         local_port (int, optional): The port on which this python script is running
             Needed for ports. SLims will contact the python script on this
             ports. Defaults to "5000"
-        verify (str, optional): Path to the certificate file if SLIMS REST is contacted via HTTPS
+        verify (str, optional): Path to the certificate file if SLIMS REST is reached via HTTPS
     """
 
     def __init__(self,

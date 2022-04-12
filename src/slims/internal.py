@@ -30,8 +30,8 @@ class _SlimsApi(object):
                  client_id: str = None,
                  client_secret: str = None,
                  verify: str = None):
-        self.url = url + "/rest/"
-        self.raw_url = url + "/"
+        self.url = url + ("" if url.endswith('/') else '/') + "rest/"
+        self.raw_url = url + ("" if url.endswith('/') else '/')
         self.username = username
         self.password = password
         self.repo_location = repo_location

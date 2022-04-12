@@ -65,6 +65,7 @@ class Slims(object):
         local_port (int, optional): The port on which this python script is running
             Needed for ports. SLims will contact the python script on this
             ports. Defaults to "5000"
+        verify (str, optional): Path to the certificate file if SLIMS REST is contacted via HTTPS
     """
 
     def __init__(self,
@@ -77,7 +78,8 @@ class Slims(object):
                  client_secret: str = None,
                  repo_location: str = None,
                  local_host: str = "localhost",
-                 local_port: int = 5000):
+                 local_port: int = 5000,
+                 verify: str = None):
 
         slims_instances[name] = self
         self.local_host = local_host
@@ -85,7 +87,7 @@ class Slims(object):
         self.local_url = "http://" + self.local_host + \
             ":" + str(self.local_port) + "/"
         if username is not None and password is not None:
-            self.slims_api = _SlimsApi(url, username, password, repo_location)
+            self.slims_api = _SlimsApi(url, username, password, repo_location, verify=verify)
         elif oauth:
             self.slims_api = _SlimsApi(url,
                                        "OAUTH",
@@ -95,7 +97,8 @@ class Slims(object):
                                        self.token_updater,
                                        self.local_url + name + "/token",
                                        client_id=client_id,
-                                       client_secret=client_secret)
+                                       client_secret=client_secret,
+                                       verify=verify)
             self.token: Optional[dict[str, Any]] = None
         else:
             raise Exception(

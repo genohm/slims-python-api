@@ -284,13 +284,13 @@ class Record(object):
             A list of records when the link is incoming
 
         Examples:
-            >>> content_type = slims.fetch_by_pk("Content", 1L)
+            >>> content_type = slims.fetch_by_pk("Content", 1)
                     .follow("cntn_fk_contentType")
 
             This fetches the content record with primary key 1 and then fetches
             its content type (one record).
 
-            >>> results = slims.fetch_by_pk("Content", 1L)
+            >>> results = slims.fetch_by_pk("Content", 1)
                     .follow("-rslt_fk_content")
 
             This fetches the content record with primary key 1 and then fetches

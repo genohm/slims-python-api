@@ -28,7 +28,8 @@ class _SlimsApi(object):
                  token_updater: Callable = None,
                  redirect_url: str = "",
                  client_id: str = None,
-                 client_secret: str = None):
+                 client_secret: str = None,
+                 verify: str = None):
         self.url = url + "/rest/"
         self.raw_url = url + "/"
         self.username = username
@@ -37,6 +38,7 @@ class _SlimsApi(object):
         self.oauth = oauth
         self.client_id = client_id
         self.client_secret = client_secret
+        self.verify = verify
         if oauth:
             if self.client_id is None:
                 raise _SlimsApiException(
@@ -63,7 +65,8 @@ class _SlimsApi(object):
             response = requests.get(url,
                                     auth=(self.username, self.password),
                                     headers=_SlimsApi._headers(),
-                                    json=body)
+                                    json=body,
+                                    verify=self.verify)
         records: List['Record'] = []
         if response.status_code == 200:
             for entity in response.json()["entities"]:
@@ -84,7 +87,9 @@ class _SlimsApi(object):
                                           client_secret=self.client_secret)
         else:
             return requests.get(self.url + url,
-                                auth=(self.username, self.password), headers=_SlimsApi._headers())
+                                auth=(self.username, self.password),
+                                headers=_SlimsApi._headers(),
+                                verify=self.verify)
 
     def post(self, url: str, body: dict[str, Any] = None) -> requests.Response:
         if self.oauth:
@@ -95,7 +100,9 @@ class _SlimsApi(object):
                                            client_secret=self.client_secret)
         else:
             return requests.post(self.url + url, json=body,
-                                 auth=(self.username, self.password), headers=_SlimsApi._headers())
+                                 auth=(self.username, self.password),
+                                 headers=_SlimsApi._headers(),
+                                 verify=self.verify)
 
     def put(self, url: str, body: dict[str, Any] = None) -> requests.Response:
         if self.oauth:
@@ -106,7 +113,9 @@ class _SlimsApi(object):
                                           client_secret=self.client_secret)
         else:
             return requests.put(self.url + url, json=body,
-                                auth=(self.username, self.password), headers=_SlimsApi._headers())
+                                auth=(self.username, self.password),
+                                headers=_SlimsApi._headers(),
+                                verify=self.verify)
 
     def delete(self, url: str) -> requests.Response:
         if self.oauth:
@@ -116,7 +125,9 @@ class _SlimsApi(object):
                                              client_secret=self.client_secret)
         else:
             return requests.delete(self.url + url,
-                                   auth=(self.username, self.password), headers=_SlimsApi._headers())
+                                   auth=(self.username, self.password),
+                                   headers=_SlimsApi._headers(),
+                                   verify=self.verify)
 
     def authorization_url(self) -> str:
         return self.oauth_session.authorization_url(self.raw_url + "oauth/authorize")[0]

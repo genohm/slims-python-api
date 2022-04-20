@@ -29,7 +29,7 @@ class _SlimsApi(object):
                  redirect_url: str = "",
                  client_id: str = None,
                  client_secret: str = None,
-                 **request_params):
+                 **request_params: Any):
         self.url = url + ("" if url.endswith('/') else '/') + "rest/"
         self.raw_url = url + ("" if url.endswith('/') else '/')
         self.username = username

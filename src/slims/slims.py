@@ -4,7 +4,7 @@ import threading
 import time
 from typing import Any, List, Optional
 
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, abort
 from flask import request as flaskrequest
 
 from .criteria import Criterion
@@ -20,6 +20,8 @@ logging.basicConfig(level=logging.INFO)
 @app.route("/<name>/<operation>/<step>", methods=["POST"])
 def _start_step(name: str, operation: str, step: str) -> Response:
     data = flaskrequest.json
+    if data is None:
+        abort(400, description="Expected JSON data")
     flow_information = data['flowInformation']
 
     logger.info("Executing " + str(flow_information['flowId']) + " step " + step)
@@ -79,7 +81,7 @@ class Slims(object):
                  repo_location: str = None,
                  local_host: str = "localhost",
                  local_port: int = 5000,
-                 **request_params):
+                 **request_params: Any):
 
         slims_instances[name] = self
         self.local_host = local_host

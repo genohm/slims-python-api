@@ -39,7 +39,7 @@ class _SlimsApi(object):
         self.client_id = client_id
         self.client_secret = client_secret
         self.request_params = request_params
-        if oauth:
+        if self.oauth:
             if self.client_id is None:
                 raise _SlimsApiException(
                     "client_id is required when using OAuth")
@@ -51,6 +51,9 @@ class _SlimsApi(object):
                                                scope=["api"],
                                                auto_refresh_url=self.raw_url + "oauth/token",
                                                token_updater=token_updater)
+        elif self.username is None or self.password is None:
+            raise _SlimsApiException(
+                "Username and password are required when not using OAuth")
 
     def get_entities(self, url: str, body: dict[str, Any] = None) -> List['Record']:
         if(self.url.startswith('https') and url.startswith('http') and url[4:].startswith(self.url[5:])):
@@ -62,6 +65,7 @@ class _SlimsApi(object):
             response = self.oauth_session.get(
                 url, headers=_SlimsApi._headers(), json=body, **self.request_params)
         else:
+            assert self.username is not None and self.password is not None
             response = requests.get(url,
                                     auth=(self.username, self.password),
                                     headers=_SlimsApi._headers(),
@@ -87,6 +91,7 @@ class _SlimsApi(object):
                                           client_secret=self.client_secret,
                                           **self.request_params)
         else:
+            assert self.username is not None and self.password is not None
             return requests.get(self.url + url,
                                 auth=(self.username, self.password),
                                 headers=_SlimsApi._headers(),
@@ -101,6 +106,7 @@ class _SlimsApi(object):
                                            client_secret=self.client_secret,
                                            **self.request_params)
         else:
+            assert self.username is not None and self.password is not None
             return requests.post(self.url + url, json=body,
                                  auth=(self.username, self.password),
                                  headers=_SlimsApi._headers(),
@@ -115,6 +121,7 @@ class _SlimsApi(object):
                                           client_secret=self.client_secret,
                                           **self.request_params)
         else:
+            assert self.username is not None and self.password is not None
             return requests.put(self.url + url, json=body,
                                 auth=(self.username, self.password),
                                 headers=_SlimsApi._headers(),
@@ -128,6 +135,7 @@ class _SlimsApi(object):
                                              client_secret=self.client_secret,
                                              **self.request_params)
         else:
+            assert self.username is not None and self.password is not None
             return requests.delete(self.url + url,
                                    auth=(self.username, self.password),
                                    headers=_SlimsApi._headers(),

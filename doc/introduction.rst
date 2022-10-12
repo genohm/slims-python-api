@@ -9,6 +9,8 @@ approaches could work for other programming languages.
 Installing slims-python-api
 ---------------------------
 
+The required Python version is 3.9
+
 You install slims-python-api with pip. Make sure to install the version corresponding to your installed slims version.
 
 If you run SLIMS 6.3 you run

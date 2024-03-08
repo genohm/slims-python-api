@@ -4,6 +4,8 @@ The SLims python api allows you to interact with your SLims instance by using Py
 
 ## Installing
 
+The required Python version is 3.9
+
 If you run SLIMS 6.3 you run
 
 ```

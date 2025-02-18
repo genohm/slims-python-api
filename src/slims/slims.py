@@ -73,12 +73,12 @@ class Slims(object):
     def __init__(self,
                  name: str,
                  url: str,
-                 username: str = None,
-                 password: str = None,
+                 username: Optional[str] = None,
+                 password: Optional[str] = None,
                  oauth: bool = False,
-                 client_id: str = None,
-                 client_secret: str = None,
-                 repo_location: str = None,
+                 client_id: Optional[str] = None,
+                 client_secret: Optional[str] = None,
+                 repo_location: Optional[str] = None,
                  local_host: str = "localhost",
                  local_port: int = 5000,
                  **request_params: Any):
@@ -117,8 +117,8 @@ class Slims(object):
     def token_updater(self, token: dict[str, Any]) -> None:
         self.token = token
 
-    def fetch(self, table: str, criteria: Criterion, sort: list[str] = None,
-              start: int = None, end: int = None) -> List[Record]:
+    def fetch(self, table: str, criteria: Criterion, sort: Optional[list[str]] = None,
+              start: Optional[int] = None, end: Optional[int] = None) -> List[Record]:
         """Fetch data by criteria
 
         The optional start and end parameters can be used to page the returned

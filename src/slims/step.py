@@ -1,7 +1,7 @@
 import logging
 import threading
 import traceback
-from typing import Any, Callable
+from typing import Optional, Any, Callable
 
 from .flowrun import FlowRun, Status
 from .internal import _slims_local
@@ -123,7 +123,7 @@ def text_input(name: str, label: str, **kwargs: Any) -> dict[str, Any]:
 
 
 def single_choice_with_field_list_input(name: str, label: str, fieldelements: list[Any],
-                                        fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
+                                        fieldtype: Optional[list[str]] = None, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a single choice out of a list input for SLimsGate.
 
     Args:
@@ -141,7 +141,7 @@ def single_choice_with_field_list_input(name: str, label: str, fieldelements: li
 
 
 def multiple_choice_with_field_list_input(name: str, label: str, fieldelements: list[Any],
-                                          fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
+                                          fieldtype: Optional[list[str]] = None, **kwargs: Any) -> dict[str, Any]:
     """Allows to have a multiple choice out of a list input for SLimsGate.
 
     Args:
@@ -158,7 +158,7 @@ def multiple_choice_with_field_list_input(name: str, label: str, fieldelements: 
 
 
 def _choice_with_field_list_input(name: str, label: str, datatype: str, fieldelements: list[Any],
-                                  fieldtype: list[str] = None, **kwargs: Any) -> dict[str, Any]:
+                                  fieldtype: Optional[list[str]] = None, **kwargs: Any) -> dict[str, Any]:
     entries = []
     i = 0
     for fieldelement in fieldelements:
@@ -181,8 +181,8 @@ def _choice_with_field_list_input(name: str, label: str, datatype: str, fieldele
     return values
 
 
-def single_choice_with_value_map_input(name: str, label: str, table: str = None, filtered: Any = None,
-                                       reference: str = None, fixed_choice_custom_field: str = None,
+def single_choice_with_value_map_input(name: str, label: str, table: Optional[str] = None, filtered: Optional[Any] = None,
+                                       reference: Optional[str] = None, fixed_choice_custom_field: Optional[str] = None,
                                        **kwargs: Any) -> dict[str, Any]:
     """Allows to have a single choice out of a list input for SLimsGate.
 
@@ -206,8 +206,8 @@ def single_choice_with_value_map_input(name: str, label: str, table: str = None,
         name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
-def multiple_choice_with_value_map_input(name: str, label: str, table: str = None, filtered: Any = None,
-                                         reference: str = None, fixed_choice_custom_field: str = None,
+def multiple_choice_with_value_map_input(name: str, label: str, table: Optional[str] = None, filtered: Optional[Any] = None,
+                                         reference: Optional[str] = None, fixed_choice_custom_field: Optional[str] = None,
                                          **kwargs: Any) -> dict[str, Any]:
     """Allows to have a multiple choice out of a list input for SLimsGate.
 
@@ -230,9 +230,9 @@ def multiple_choice_with_value_map_input(name: str, label: str, table: str = Non
         name, label, "MULTIPLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
-def _choice_with_value_map_input(name: str, label: str, datatype: str = None, table: str = None,
-                                 filtered: Any = None, reference: str = None,
-                                 fixed_choice_custom_field: str = None, **kwargs: Any) -> dict[str, Any]:
+def _choice_with_value_map_input(name: str, label: str, datatype: Optional[str] = None, table: Optional[str] = None,
+                                 filtered: Optional[Any] = None, reference: Optional[str] = None,
+                                 fixed_choice_custom_field: Optional[str] = None, **kwargs: Any) -> dict[str, Any]:
     value_map = {
         'filter': filtered,
         'reference': reference,

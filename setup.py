@@ -17,12 +17,12 @@ CLASSIFIERS = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
 ]
-INSTALL_REQUIRES = ["flask>=1.1.0", "requests>=2.25.0", "requests_oauthlib>=1.3.0", "deprecation>=2.0.0"]
+INSTALL_REQUIRES = ["flask>=3.1.0", "requests>=2.32.3", "requests_oauthlib>=2.0.0", "deprecation>=2.0.0"]
 
 ###############################################################################
 

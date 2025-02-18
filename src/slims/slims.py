@@ -117,7 +117,7 @@ class Slims(object):
     def token_updater(self, token: dict[str, Any]) -> None:
         self.token = token
 
-    def fetch(self, table: str, criteria: Criterion, sort: list[str] = None,
+    def fetch(self, table: str, criteria: Optional[Criterion], sort: list[str] = None,
               start: int = None, end: int = None) -> List[Record]:
         """Fetch data by criteria
 
@@ -126,7 +126,7 @@ class Slims(object):
 
         Args:
             table (str): The table to fetch from
-            criteria (criteria): The criteria to match
+            criteria (criteria or None): The criteria to match
             sort (list, optional): The fields to sort on
             start (int, optional):  The first row to return
             end (int, optional): The last row to return

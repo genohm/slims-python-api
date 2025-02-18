@@ -21,14 +21,14 @@ class _SlimsApi(object):
 
     def __init__(self,
                  url: str,
-                 username: str = None,
-                 password: str = None,
-                 repo_location: str = None,
+                 username: Optional[str] = None,
+                 password: Optional[str] = None,
+                 repo_location: Optional[str] = None,
                  oauth: bool = False,
-                 token_updater: Callable = None,
+                 token_updater: Optional[Callable] = None,
                  redirect_url: str = "",
-                 client_id: str = None,
-                 client_secret: str = None,
+                 client_id: Optional[str] = None,
+                 client_secret: Optional[str] = None,
                  **request_params: Any):
         self.url = url + ("" if url.endswith('/') else '/') + "rest/"
         self.raw_url = url + ("" if url.endswith('/') else '/')
@@ -55,7 +55,7 @@ class _SlimsApi(object):
             raise _SlimsApiException(
                 "Username and password are required when not using OAuth")
 
-    def get_entities(self, url: str, body: dict[str, Any] = None) -> List['Record']:
+    def get_entities(self, url: str, body: Optional[dict[str, Any]] = None) -> List['Record']:
         if (self.url.startswith('https') and url.startswith('http') and url[4:].startswith(self.url[5:])):
             url = 'https' + url[4:]
         if not url.startswith(self.url):
@@ -97,7 +97,7 @@ class _SlimsApi(object):
                                 headers=_SlimsApi._headers(),
                                 **self.request_params)
 
-    def post(self, url: str, body: dict[str, Any] = None) -> requests.Response:
+    def post(self, url: str, body: Optional[dict[str, Any]] = None) -> requests.Response:
         if self.oauth:
             return self.oauth_session.post(self.url + url,
                                            json=body,
@@ -112,7 +112,7 @@ class _SlimsApi(object):
                                  headers=_SlimsApi._headers(),
                                  **self.request_params)
 
-    def put(self, url: str, body: dict[str, Any] = None) -> requests.Response:
+    def put(self, url: str, body: Optional[dict[str, Any]] = None) -> requests.Response:
         if self.oauth:
             return self.oauth_session.put(self.url + url,
                                           json=body,

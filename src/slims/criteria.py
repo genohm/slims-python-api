@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-from typing import Any
+from typing import Optional, Any
 
 
 class _JunctionType(Enum):
@@ -349,7 +349,7 @@ def is_na(field: str) -> Expression:
     return Expression(_criterion("isNaFilter", "equals", field))
 
 
-def _criterion(field: str, operator: str, value: Any = None) -> dict[str, Any]:
+def _criterion(field: str, operator: str, value: Optional[Any] = None) -> dict[str, Any]:
     return_value = {
         "fieldName": field,
         "operator": operator

@@ -2,9 +2,10 @@ import datetime
 import time
 
 from .slims import Record
+from typing import Optional
 
 
-def display_results(records: list[Record], fields: list[str], number: int = None) -> None:
+def display_results(records: list[Record], fields: list[str], number: Optional[int] = None) -> None:
     """Prints to display the filtered results as a list of elements with their selected fields.
 
     Args:

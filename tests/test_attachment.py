@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 import unittest
+import pytest
 
 import responses
 
@@ -10,7 +11,6 @@ from slims.slims import Slims
 
 
 class Test_Attachments(unittest.TestCase):
-
     attachmentValues = {"pk": 1,
                         "tableName": "Attachment",
                         "columns": [{
@@ -25,24 +25,23 @@ class Test_Attachments(unittest.TestCase):
     def test_attachment_path_without_repo_location_throws(self):
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         attachment = Attachment(self.attachmentValues, slims.slims_api)
-        self.assertRaises(RuntimeError, attachment.get_local_path)
+        pytest.raises(RuntimeError, attachment.get_local_path)
 
     def test_attachment_path_with_repo_location(self):
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/var/slims/repo")
         attachment = Attachment(self.attachmentValues, slims.slims_api)
-        self.assertEqual("/var/slims/repo" + os.sep + "a/file.txt", attachment.get_local_path())
+        assert "/var/slims/repo" + os.sep + "a/file.txt" == attachment.get_local_path()
 
     @responses.activate
     def test_add_attachment(self):
-
         def add_attachment_callback(request):
             body = json.loads(request.body.decode('utf-8'))
-            self.assertDictEqual(
-                body,
-                {"atln_recordPk": 1,
-                 "atln_recordTable": "Content",
-                 "attm_name": "test.txt",
-                 "contents": 'U29tZSB0ZXh0'})
+            assert body == {
+                "atln_recordPk": 1,
+                "atln_recordTable": "Content",
+                "attm_name": "test.txt",
+                "contents": 'U29tZSB0ZXh0'
+            }
 
             return (200, {"Location": "http://localhost:9999/rest/Attachment/2"}, json.dumps({}))
 
@@ -55,11 +54,10 @@ class Test_Attachments(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin", repo_location="/var/slims/repo")
         content = Record(self.contentValues, slims.slims_api)
-        self.assertEqual(2, content.add_attachment("test.txt", b"Some text"))
+        assert 2, content.add_attachment("test.txt" == b"Some text")
 
     @responses.activate
     def test_download_attachment(self):
-
         def repo_request_callback(request):
             return (200, {}, "blabla")
 
@@ -77,5 +75,5 @@ class Test_Attachments(unittest.TestCase):
         temp.close()
         attachment.download_to(filename)
         with open(filename, 'r') as file:
-            self.assertEqual("blabla", file.read())
+            assert "blabla" == file.read()
         os.remove(temp.name)

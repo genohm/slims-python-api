@@ -11,35 +11,12 @@ class Test_Adding_Flow(unittest.TestCase):
 
     @responses.activate
     def test_adding_flow(self):
-
         def execute_first_step(data):
             pass
 
-        def add_flow_callback(request):
-            body = json.loads(request.body.decode('utf-8'))
-            self.assertDictEqual(
-                body,
-                {'instance': {'url': 'http://localhost:5000', 'name': 'testSlims'},
-                 'flows': [
-                     {'id': 'myFlow',
-                      'name': 'My flow in python',
-                      'usage': 'CONTENT_MANAGEMENT',
-                      'steps': [
-                          {'hidden': False,
-                           'name': 'first step',
-                           'input': {'parameters': [{'type': 'STRING', 'name': 'text', 'label': 'Text'}]},
-                           'process': {'route': 'myFlow/0', 'asynchronous': False},
-                           'output': {'parameters': [{'type': 'FILE', 'name': 'file'}]}
-                           }
-                      ],
-                      'pythonApiFlow': True}]})
-
-            return 200, {}, json.dumps({})
-
-        responses.add_callback(
-            responses.POST,
+        rsp = responses.post(
             'https://localhost:9999/rest/external/',
-            callback=add_flow_callback,
+            status=200,
             content_type='application/json',
         )
 
@@ -61,3 +38,22 @@ class Test_Adding_Flow(unittest.TestCase):
                 )
             ],
             testing=True)
+
+        assert rsp.call_count == 1
+        body = json.loads(rsp.calls[0].request.body.decode('utf-8'))
+        assert body == {
+            'instance': {'url': 'http://localhost:5000', 'name': 'testSlims'},
+            'flows': [
+                {'id': 'myFlow',
+                 'name': 'My flow in python',
+                 'usage': 'CONTENT_MANAGEMENT',
+                 'steps': [
+                     {'hidden': False,
+                      'name': 'first step',
+                      'input': {'parameters': [{'type': 'STRING', 'name': 'text', 'label': 'Text'}]},
+                      'process': {'route': 'myFlow/0', 'asynchronous': False},
+                      'output': {'parameters': [{'type': 'FILE', 'name': 'file'}]}
+                      }
+                 ],
+                 'pythonApiFlow': True}]
+        }

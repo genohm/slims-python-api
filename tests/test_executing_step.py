@@ -1,4 +1,5 @@
 import unittest
+import pytest
 
 from mock import MagicMock
 
@@ -46,6 +47,6 @@ class Test_Executing_Step(unittest.TestCase):
         flow_run._update_status = MagicMock()
         flow_run.log = MagicMock()
 
-        self.assertRaises(StepExecutionException, step.execute, flow_run)
+        pytest.raises(StepExecutionException, step.execute, flow_run)
 
         flow_run._update_status.assert_called_with(Status.FAILED)

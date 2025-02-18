@@ -1,6 +1,7 @@
 import json
 import unittest
 
+import pytest
 import responses
 
 from slims.criteria import equals
@@ -34,7 +35,7 @@ class Test_Fetching_Data(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         entity = slims.fetch_by_pk("Content", 1)
-        self.assertEqual(entity.cntn_id.value, "sample1")
+        assert entity.cntn_id.value == "sample1"
 
     @responses.activate
     def test_fetch_by_pk_nothing_returned(self):
@@ -47,19 +48,19 @@ class Test_Fetching_Data(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         entity = slims.fetch_by_pk("Content", 1)
-        self.assertEqual(entity, None)
+        assert entity is None
 
     @responses.activate
     def test_fetch_advanced(self):
 
         def request_callback(request):
             body = json.loads(request.body.decode('utf-8'))
-            self.assertEqual(body["startRow"], 0)
-            self.assertEqual(body["endRow"], 1)
-            self.assertEqual(body["sortBy"], ["cntn_createdOn"])
-            self.assertEqual(body["criteria"]["operator"], "equals")
-            self.assertEqual(body["criteria"]["fieldName"], "cntn_id")
-            self.assertEqual(body["criteria"]["value"], "test")
+            assert body["startRow"] == 0
+            assert body["endRow"] == 1
+            assert body["sortBy"] == ["cntn_createdOn"]
+            assert body["criteria"]["operator"] == "equals"
+            assert body["criteria"]["fieldName"] == "cntn_id"
+            assert body["criteria"]["value"] == "test"
 
             return (200, {}, json.dumps({"entities": []}))
 
@@ -76,7 +77,7 @@ class Test_Fetching_Data(unittest.TestCase):
                                sort=["cntn_createdOn"],
                                start=0,
                                end=1)
-        self.assertEqual(entities, [])
+        assert entities == []
 
     @responses.activate
     def test_fetch_incoming_link(self):
@@ -119,8 +120,8 @@ class Test_Fetching_Data(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         entity = slims.fetch_by_pk("Content", 1)
-        self.assertIsInstance(entity.follow("cntn_fk_contentType"), Record)
-        self.assertEqual(entity.follow("cntn_fk_location"), None)
+        assert isinstance(entity.follow("cntn_fk_contentType"), Record)
+        assert entity.follow("cntn_fk_location") is None
 
     @responses.activate
     def test_fetch_outgoing_link(self):
@@ -153,7 +154,7 @@ class Test_Fetching_Data(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         entity = slims.fetch_by_pk("Content", 1)
-        self.assertIsInstance(entity.follow("-rslt_fk_content")[0], Record)
+        assert isinstance(entity.follow("-rslt_fk_content")[0], Record)
 
     @responses.activate
     def test_fetch_unknown_link(self):
@@ -170,7 +171,7 @@ class Test_Fetching_Data(unittest.TestCase):
 
         slims = Slims("testSlims", "http://localhost:9999", "admin", "admin")
         entity = slims.fetch_by_pk("Content", 1)
-        self.assertRaises(KeyError, entity.follow, "unknown")
+        pytest.raises(KeyError, entity.follow, "unknown")
 
     @responses.activate
     def test_fetch_attachments(self):
@@ -190,4 +191,4 @@ class Test_Fetching_Data(unittest.TestCase):
                         slims.slims_api)
 
         attachments = record.attachments()
-        self.assertIsInstance(attachments[0], Attachment)
+        assert isinstance(attachments[0], Attachment)

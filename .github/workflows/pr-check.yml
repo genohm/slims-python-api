@@ -1,0 +1,24 @@
+name: Run tests on PR
+
+on:
+  push:
+    branches:
+      - 7.2
+  pull_request:
+    branches:
+      - 7.2
+
+
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13' 
+    - name: Install tox
+      run: pip install tox
+    - name: Run tests
+      run: tox

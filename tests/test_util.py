@@ -39,7 +39,7 @@ class Test_Util(unittest.TestCase):
         with redirect_stdout(stringStream):
             display_field_value(rec, ["cntn_quantity1", "cntn_quantity2", "cntn_quantity3", "cntn_quantity4"])
 
-        self.assertEquals(stringStream.getvalue().strip(), "None None 4.184 kJ None mm 6.02214076e+23 None")
+        self.assertEqual(stringStream.getvalue().strip(), "None None 4.184 kJ None mm 6.02214076e+23 None")
 
     def test_display_field_value_date_values(self):
         content = {
@@ -56,7 +56,7 @@ class Test_Util(unittest.TestCase):
         with redirect_stdout(stringStream):
             display_field_value(rec, ["cntn_datetime", "cntn_date", "cntn_time"])
 
-        self.assertEquals(stringStream.getvalue().strip(), str(datetimevalue) + " 2020-10-06 10:06")
+        self.assertEqual(stringStream.getvalue().strip(), str(datetimevalue) + " 2020-10-06 10:06")
 
     def test_display_field_value_date_nones(self):
         content = {
@@ -71,4 +71,4 @@ class Test_Util(unittest.TestCase):
         with redirect_stdout(stringStream):
             display_field_value(rec, ["cntn_datetime", "cntn_date", "cntn_time"])
 
-        self.assertEquals(stringStream.getvalue().strip(), "None None None")
+        self.assertEqual(stringStream.getvalue().strip(), "None None None")

@@ -1,5 +1,4 @@
-nose
-coverage
+pytest
+pytest-cov
 responses
 mock
-mypy

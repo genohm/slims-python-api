@@ -7,11 +7,11 @@ class Test_Slimsgate_Input(unittest.TestCase):
 
     def test_type_input(self):
         expected = {"label": "Label", "name": "name", "type": "STRING"}
-        self.assertDictEqual(expected, text_input("name", "Label"))
+        assert expected == text_input("name", "Label")
 
     def test_type_input_with_default_value(self):
         expected = {"label": "Label", "name": "name", "type": "STRING", "defaultValue": "test"}
-        self.assertDictEqual(expected, text_input("name", "Label", defaultValue="test"))
+        assert expected == text_input("name", "Label", defaultValue="test")
 
     def test_single_choice_with_field_list_input_and_types(self):
         values = single_choice_with_field_list_input(
@@ -28,7 +28,7 @@ class Test_Slimsgate_Input(unittest.TestCase):
                             {'field': 'Hello', 'type': 'String'}
                         ]
                     }}
-        self.assertDictEqual(expected, values)
+        assert expected == values
 
     def test_single_choice_with_field_list_input_without_types(self):
         values = single_choice_with_field_list_input(
@@ -42,7 +42,7 @@ class Test_Slimsgate_Input(unittest.TestCase):
                             {'field': 'Hi', 'type': None}
                         ]
                     }}
-        self.assertDictEqual(expected, values)
+        assert expected == values
 
     def test_single_choice_with_value_map_input(self):
         values = single_choice_with_value_map_input(
@@ -60,4 +60,4 @@ class Test_Slimsgate_Input(unittest.TestCase):
                         'reference': 'reference',
                         'table': 'Content'
                     }}
-        self.assertDictEqual(expected, values)
+        assert expected == values

@@ -181,8 +181,12 @@ def _choice_with_field_list_input(name: str, label: str, datatype: str, fieldele
     return values
 
 
-def single_choice_with_value_map_input(name: str, label: str, table: Optional[str] = None, filtered: Optional[Any] = None,
-                                       reference: Optional[str] = None, fixed_choice_custom_field: Optional[str] = None,
+def single_choice_with_value_map_input(name: str,
+                                       label: str,
+                                       table: Optional[str] = None,
+                                       filtered: Optional[Any] = None,
+                                       reference: Optional[str] = None,
+                                       fixed_choice_custom_field: Optional[str] = None,
                                        **kwargs: Any) -> dict[str, Any]:
     """Allows to have a single choice out of a list input for SLimsGate.
 
@@ -206,8 +210,10 @@ def single_choice_with_value_map_input(name: str, label: str, table: Optional[st
         name, label, "SINGLE_CHOICE", table, filtered, reference, fixed_choice_custom_field, **kwargs)
 
 
-def multiple_choice_with_value_map_input(name: str, label: str, table: Optional[str] = None, filtered: Optional[Any] = None,
-                                         reference: Optional[str] = None, fixed_choice_custom_field: Optional[str] = None,
+def multiple_choice_with_value_map_input(name: str, label: str, table: Optional[str] = None,
+                                         filtered: Optional[Any] = None,
+                                         reference: Optional[str] = None,
+                                         fixed_choice_custom_field: Optional[str] = None,
                                          **kwargs: Any) -> dict[str, Any]:
     """Allows to have a multiple choice out of a list input for SLimsGate.
 

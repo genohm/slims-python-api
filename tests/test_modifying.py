@@ -1,8 +1,10 @@
 import unittest
 
+import pytest
 import responses
 
-from slims.internal import Record
+from slims.internal import Record, _SlimsApiException
+
 from slims.slims import Slims
 
 
@@ -28,7 +30,7 @@ class Test_Modifying(unittest.TestCase):
                         slims.slims_api)
 
         updated = record.update({"test": "foo"})
-        self.assertIsInstance(updated, Record)
+        assert isinstance(updated, Record)
 
     @responses.activate
     def test_add(self):
@@ -45,7 +47,7 @@ class Test_Modifying(unittest.TestCase):
         )
 
         added = slims.add("Content", {"test": "foo"})
-        self.assertIsInstance(added, Record)
+        assert isinstance(added, Record)
 
     @responses.activate
     def test_remove_success(self):
@@ -79,4 +81,4 @@ class Test_Modifying(unittest.TestCase):
                          "columns": []},
                         slims.slims_api)
 
-        self.assertRaises(Exception, record.remove)
+        pytest.raises(_SlimsApiException, record.remove)

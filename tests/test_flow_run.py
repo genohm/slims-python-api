@@ -13,7 +13,7 @@ class Test_Flow_Run(unittest.TestCase):
     def test_logging(self):
         def request_callback(request):
             body = json.loads(request.body.decode('utf-8'))
-            self.assertDictEqual({'flowRunGuid': 'guid', 'index': 0, 'message': 'hi'}, body)
+            assert body == {'flowRunGuid': 'guid', 'index': 0, 'message': 'hi'}
             return (200, {}, json.dumps({}))
 
         responses.add_callback(
@@ -33,7 +33,7 @@ class Test_Flow_Run(unittest.TestCase):
     def test_update_status(self):
         def request_callback(request):
             body = json.loads(request.body.decode('utf-8'))
-            self.assertDictEqual({'flowRunGuid': 'guid', 'index': 0, 'status': 'FAILED'}, body)
+            assert body == {'flowRunGuid': 'guid', 'index': 0, 'status': 'FAILED'}
             return (200, {}, json.dumps({}))
 
         responses.add_callback(

@@ -76,7 +76,7 @@ class Test_Fetching_Data(unittest.TestCase):
                                sort=["cntn_createdOn"],
                                start=0,
                                end=1)
-        self.assertEquals(entities, [])
+        self.assertEqual(entities, [])
 
     @responses.activate
     def test_fetch_incoming_link(self):
